@@ -6,6 +6,7 @@ import {
   type RowClickedEvent,
   type CellClickedEvent,
   type SelectionChangedEvent,
+  themeBalham,
 } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 
@@ -41,7 +42,7 @@ const DynamicTable = forwardRef(
   ) => {
     return (
       <div className="relative h-full w-full min-h-0">
-        <div className="ag-theme-quartz h-full w-full">
+        <div className="h-full w-full">
           <AgGridReact
             ref={ref}
             rowData={rowData}
@@ -55,11 +56,11 @@ const DynamicTable = forwardRef(
             onSelectionChanged={onSelectionChanged}
             onGridReady={onGridReady}
             animateRows
+            theme={themeBalham}
             defaultColDef={{
               sortable: true,
               filter: true,
               resizable: true,
-              floatingFilter: true,
               suppressMovable: false,
               flex: 1,
               minWidth: 100,

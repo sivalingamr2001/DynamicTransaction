@@ -247,7 +247,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Header controls for Bin Master */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-1">
         <div className="flex items-center gap-4">
           <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
             Bin Master Registry
@@ -336,29 +336,8 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
         </div>
       </div>
 
-      {/* Query filters for All Bins */}
-      {subView === "all_bins" && (
-        <div className="flex shrink-0 items-center gap-2.5 border-b border-slate-200 bg-white px-6 py-2">
-          <span className="text-[10px] font-black tracking-wider text-slate-500 uppercase">
-            Select Region:
-          </span>
-          <NativeSelect
-            value={regionFilter}
-            onChange={(e) => setRegionFilter(e.target.value)}
-            className="w-36"
-          >
-            {regions.map((reg) => (
-              <NativeSelectOption key={reg} value={reg}>
-                {reg}
-              </NativeSelectOption>
-            ))}
-            {regions.length === 0 && <NativeSelectOption value="HO">HO</NativeSelectOption>}
-          </NativeSelect>
-        </div>
-      )}
-
       {/* AG Grid View container */}
-      <div className="flex-1 min-h-0 p-4">
+      <div className="flex-1 min-h-0">
         <DynamicTable
           ref={gridRef}
           rowData={rowData}

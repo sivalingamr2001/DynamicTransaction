@@ -79,7 +79,7 @@ export const BinSpSection = ({ withLoader }: BinSpSectionProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Action Header bar */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-1">
         <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
           Replenishment Bins (Update Mode)
         </h2>
@@ -117,7 +117,7 @@ export const BinSpSection = ({ withLoader }: BinSpSectionProps) => {
       </div>
 
       {/* Grid container */}
-      <div className="flex-1 min-h-0 p-4">
+      <div className="flex-1 min-h-0">
         <DynamicTable
           ref={gridRef}
           rowData={rowData}

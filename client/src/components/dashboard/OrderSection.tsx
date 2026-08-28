@@ -292,7 +292,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Top action header for HOD users only */}
       {isHod && (
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-1">
           <div className="flex items-center gap-3">
             {hodView !== "consolidated" && (
               <Button
@@ -424,7 +424,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
       )}
 
       {/* Table grid area */}
-      <div className="flex-1 min-h-0 p-4">
+      <div className="flex-1 min-h-0">
         <DynamicTable
           ref={gridRef}
           rowData={rowData}

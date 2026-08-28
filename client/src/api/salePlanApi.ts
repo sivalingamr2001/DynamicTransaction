@@ -73,9 +73,9 @@ export const salesPlanApi = {
       parentRegion: parentRegion || "%",
     }
 
-    let queryNumber = 2
+    let queryNumber = 5
     if (isOrderId) {
-      queryNumber = 1
+      queryNumber = 4
       inputParams.ordId = Number(orderedItem)
     } else {
       inputParams.custName = customerName || ""
@@ -98,7 +98,7 @@ export const salesPlanApi = {
   getSalesPlansConsolidated: () =>
     apiClient
       .post<any>("/query/execute", {
-        QueryNumber: 3,
+        QueryNumber: 6,
         InputParameters: {},
         EnableServerSideFiltering: false,
         Count: 100000,
