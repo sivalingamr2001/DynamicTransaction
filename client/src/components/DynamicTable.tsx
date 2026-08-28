@@ -6,6 +6,8 @@ import {
   type RowClickedEvent,
   type CellClickedEvent,
   type SelectionChangedEvent,
+  themeQuartz,
+  themeBalham,
 } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 
@@ -16,7 +18,6 @@ ModuleRegistry.registerModules([AllCommunityModule])
 interface DynamicTableProps {
   rowData: any[]
   columnDefs: ColDef[]
-
   pagination?: boolean
   paginationPageSize?: number
   rowSelection?: "single" | "multiple"
@@ -31,8 +32,6 @@ const DynamicTable = forwardRef(
     {
       rowData,
       columnDefs,
-
-      pagination = true,
       paginationPageSize = 100,
       rowSelection = "multiple",
       onRowClicked,
@@ -43,12 +42,13 @@ const DynamicTable = forwardRef(
     ref: ForwardedRef<AgGridReact>
   ) => {
     return (
-      <div className="relative h-full w-full min-h-0 flex-1">
-        <div className="ag-theme-quartz h-full w-full">
+      <div className="relative h-full w-full min-h-0">
+        <div className="h-full w-full">
           <AgGridReact
             ref={ref}
             rowData={rowData}
             columnDefs={columnDefs}
+            theme={themeBalham}
             pagination={false}
             paginationPageSize={paginationPageSize}
             paginationPageSizeSelector={[25, 50, 100, 200, 500]}
