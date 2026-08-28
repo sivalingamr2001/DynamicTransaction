@@ -11,10 +11,6 @@ import { AgGridReact } from "ag-grid-react"
 import { Loader } from "./Loader"
 import { type ForwardedRef, forwardRef } from "react"
 
-// Import AG Grid styles
-import "ag-grid-community/styles/ag-grid.css"
-import "ag-grid-community/styles/ag-theme-quartz.css"
-
 ModuleRegistry.registerModules([AllCommunityModule])
 
 interface DynamicTableProps {
