@@ -27,7 +27,7 @@ export const BinSpSection = ({ withLoader }: BinSpSectionProps) => {
   // Load bins data
   const loadData = useCallback(async () => {
     try {
-      const res = await withLoader(() => salesPlanApi.getAllBins(regionFilter))
+      const res = await withLoader(() => salesPlanApi.getCustomerReplenishmentBins(regionFilter))
       setRowData(res.data || [])
     } catch (err: any) {
       console.error(err)

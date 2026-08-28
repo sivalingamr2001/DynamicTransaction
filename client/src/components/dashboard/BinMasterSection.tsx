@@ -104,7 +104,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
   const loadData = useCallback(async () => {
     try {
       if (subView === "all_bins") {
-        const res = await withLoader(() => salesPlanApi.getAllBins(regionFilter))
+        const res = await withLoader(() => salesPlanApi.getCustomerReplenishmentBins(regionFilter))
         setRowData(res.data || [])
       } else {
         const res = await withLoader(() => salesPlanApi.getPendingRepBins())
