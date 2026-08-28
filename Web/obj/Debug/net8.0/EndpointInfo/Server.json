@@ -1,0 +1,132 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Server",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/query/execute": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FetchConfig"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FetchConfig"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FetchConfig"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FetchConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FetchConfig": {
+        "type": "object",
+        "properties": {
+          "queryNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputParameters": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JToken"
+            },
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "includeReferenceLabels": {
+            "type": "boolean"
+          },
+          "enableServerSideSorting": {
+            "type": "boolean"
+          },
+          "sortField": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortDirection": {
+            "type": "string",
+            "nullable": true
+          },
+          "enableServerSideFiltering": {
+            "type": "boolean"
+          },
+          "filterConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterCondition"
+            },
+            "nullable": true
+          },
+          "searchText": {
+            "type": "string",
+            "nullable": true
+          },
+          "fetchTimezone": {
+            "type": "string",
+            "nullable": true
+          },
+          "enableDirectQueryExecution": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FilterCondition": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "nullable": true
+          },
+          "operator": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "JToken": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/JToken"
+        }
+      }
+    }
+  }
+}

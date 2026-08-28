@@ -1,0 +1,89 @@
+D:\Janatics\PES_LITE\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\Janatics\PES_LITE\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\Janatics\PES_LITE\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\Janatics\PES_LITE\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll
+D:\Janatics\SALESPLAN\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\Janatics\SALESPLAN\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\Janatics\SALESPLAN\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll
+D:\Janatics\SALESPLAN\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.sourcelink.json
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\PROJECT_BACKUP\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll
+C:\Users\1409\AppData\Local\Temp\PESLITE-build\Debug\net8.0\DynamicTransaction.deps.json
+C:\Users\1409\AppData\Local\Temp\PESLITE-build\Debug\net8.0\DynamicTransaction.dll
+C:\Users\1409\AppData\Local\Temp\PESLITE-build\Debug\net8.0\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\Server\bin\Validation\DynamicTransaction.deps.json
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\Server\bin\Validation\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\Server\bin\Validation\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\build-validation\DynamicTransaction.deps.json
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\build-validation\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\build-validation\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\.build-validation\Debug\net8.0\DynamicTransaction.deps.json
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\.build-validation\Debug\net8.0\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\.build-validation\Debug\net8.0\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\Server\bin\Validation\DynamicTransaction.deps.json
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\Server\bin\Validation\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\Server\bin\Validation\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\Repo\PESLITE\PROJECTS\JSP_PORTAL\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll
+D:\POC\Sales Plan\Server\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\POC\Sales Plan\Server\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\POC\Sales Plan\Server\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.sourcelink.json
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\Sales Plan\Server\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll

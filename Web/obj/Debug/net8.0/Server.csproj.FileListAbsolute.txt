@@ -1,0 +1,135 @@
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\appsettings.Development.json
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\appsettings.json
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.staticwebassets.endpoints.json
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.exe
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.deps.json
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.runtimeconfig.json
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Server.pdb
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Dapper.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Oracle.ManagedDataAccess.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.AspNetCore.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Serilog.Sinks.File.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Collections.Immutable.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Diagnostics.PerformanceCounter.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.PerformanceCounter.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\ConnectionDll.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\DynamicTransaction.dll
+D:\POC\Sales Plan\Server\Web\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.csproj.AssemblyReference.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\rpswa.dswa.cache.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.GeneratedMSBuildEditorConfig.editorconfig
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.AssemblyInfoInputs.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.AssemblyInfo.cs
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.csproj.CoreCompileInputs.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.MvcApplicationPartsAssemblyInfo.cs
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.MvcApplicationPartsAssemblyInfo.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.sourcelink.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\rjimswa.dswa.cache.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\scopedcss\bundle\Server.styles.css
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\staticwebassets.build.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\staticwebassets.build.json.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\staticwebassets.development.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\swae.build.ex.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.csproj.Up2Date
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.dll
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\refint\Server.dll
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.pdb
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\Server.genruntimeconfig.cache
+D:\POC\Sales Plan\Server\Web\obj\Debug\net8.0\ref\Server.dll
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.dll
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\refint\Server.dll
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.pdb
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\appsettings.Development.json
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\appsettings.json
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Server.exe
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Server.deps.json
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Server.runtimeconfig.json
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Server.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Server.pdb
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Dapper.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Oracle.ManagedDataAccess.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.AspNetCore.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Serilog.Sinks.File.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Collections.Immutable.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Diagnostics.PerformanceCounter.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.PerformanceCounter.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\ConnectionDll.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\DynamicTransaction.dll
+D:\POC\DynamicTransaction\Web\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.csproj.AssemblyReference.cache
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.GeneratedMSBuildEditorConfig.editorconfig
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.AssemblyInfoInputs.cache
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.AssemblyInfo.cs
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.csproj.CoreCompileInputs.cache
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.MvcApplicationPartsAssemblyInfo.cs
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.MvcApplicationPartsAssemblyInfo.cache
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\scopedcss\bundle\Server.styles.css
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets.build.json
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets.development.json
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.csproj.Up2Date
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\Server.genruntimeconfig.cache
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\ref\Server.dll
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets\msbuild.Server.Microsoft.AspNetCore.StaticWebAssets.props
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets\msbuild.build.Server.props
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Server.props
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Server.props
+D:\POC\DynamicTransaction\Web\obj\Debug\net8.0\staticwebassets.pack.json
