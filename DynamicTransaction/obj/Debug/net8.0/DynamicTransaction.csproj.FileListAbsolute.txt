@@ -100,3 +100,16 @@ D:/POC/DynamicTransaction/DynamicTransaction/obj/Debug/net8.0/ref/DynamicTransac
 /Users/sivalingam/Documents/GitHub/DynamicTransaction/DynamicTransaction/bin/Debug/net8.0/DynamicTransaction.dll
 /Users/sivalingam/Documents/GitHub/DynamicTransaction/DynamicTransaction/bin/Debug/net8.0/DynamicTransaction.pdb
 /Users/sivalingam/Documents/GitHub/DynamicTransaction/DynamicTransaction/obj/Debug/net8.0/ref/DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.deps.json
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\bin\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.AssemblyReference.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.GeneratedMSBuildEditorConfig.editorconfig
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfoInputs.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.AssemblyInfo.cs
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.csproj.CoreCompileInputs.cache
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.sourcelink.json
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\refint\DynamicTransaction.dll
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\DynamicTransaction.pdb
+D:\POC\DynamicTransaction\DynamicTransaction\obj\Debug\net8.0\ref\DynamicTransaction.dll

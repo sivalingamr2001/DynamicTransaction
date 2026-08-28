@@ -256,7 +256,7 @@ The API loads `QUERY_TEXT` from `JAN_QUERY_DEFINITION_DEV` using `queryNumber`, 
 }
 ```
 
-Note: the current executor does not expand JSON arrays for Oracle `IN :Regions`; query 17 requires executor support for collection expansion or a scalar-compatible SQL definition.
+The executor expands the array into individual Oracle bind parameters for the `IN` clause.
 
 ## Query 18 - Get Inventory Item Details
 

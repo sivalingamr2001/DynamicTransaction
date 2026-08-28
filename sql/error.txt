@@ -1,12 +1,596 @@
-﻿-- Sales-plan query definitions for JAN_QUERY_DEFINITION_DEV
--- Generated from Web/Infrastructure/Data/Queries/SalesPlanQueries.cs
--- Confirm the target table has QUERY_NUMBER, DESCRIPTION, and QUERY_TEXT columns before running.
 
-DELETE FROM JAN_QUERY_DEFINITION_DEV WHERE QUERY_NUMBER BETWEEN 4 AND 27;
+0 rows deleted.
 
+
+Error starting at line : 7 in command -
 DECLARE
     l_query_text CLOB;
 BEGIN
+    l_query_text := q'~SELECT
+    b.*,
+        CASE
+            WHEN
+                web_order_ref_no = 'DSP Order'
+            AND
+                (
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        jan_sp_dealer_exempt_tab
+                    WHERE
+                        customer_id = b.customer_id
+                ) > 0
+            THEN 'N'
+            ELSE 'Y'
+        END
+    dsp_status
+FROM
+    (
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    (
+                        SELECT
+                            parent_region
+                        FROM
+                            jan_rating_region_mapping
+                        WHERE
+                            region = a.region
+                    ) parent_region,
+                    region sub_region,
+                    bill_cust_name bill_to_cust_name,
+                    (
+                        SELECT
+                            ctb.customer_name
+                        FROM
+                            ra_customers ctb,
+                            ra_addresses_all ads,
+                            ra_site_uses_all sit
+                        WHERE
+                                sit.site_use_id = (
+                                    SELECT
+                                        ship_to_org_id
+                                    FROM
+                                        oe_order_headers_all
+                                    WHERE
+                                        header_id = a.header_id
+                                )
+                            AND
+                                ads.address_id = sit.address_id
+                            AND
+                                ctb.customer_id = ads.customer_id
+                    ) ship_to_cust_name,
+                    ctype,
+                    (
+                        SELECT
+                            jan_orgcode(b.ship_from_org_id)
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) org,
+                    order_number,
+                    (
+                        SELECT
+                            ordered_item
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) ordered_item,
+                    jan_sales_rrs_category(
+                        a.ship_from_org_id,
+                        a.inventory_item_id
+                    ) rrs_cat,
+                    ordered_date,
+                    ordered_quantity oa_qty,
+                    (
+                        SELECT
+                            ( b.ordered_quantity - nvl(b.shipped_quantity,0) )
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) pend_qty,
+                    (
+                        SELECT
+                            ( b.ordered_quantity - nvl(b.shipped_quantity,0) ) * b.unit_selling_price
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) pend_val,
+                    rsv_source,
+                    ord_ff_dt,
+                    schedule_ship_date,
+                    ord_ff_wk,
+                    (
+                        SELECT DISTINCT
+                            description
+                        FROM
+                            mtl_system_items
+                        WHERE
+                                inventory_item_id = a.inventory_item_id
+                            AND
+                                organization_id = a.ship_from_org_id
+                    ) desp,
+                    '' assembly_method,
+                    nvl(
+                        (
+                            SELECT
+                                assembly_method
+                            FROM
+                                jan_mes_product_master
+                            WHERE
+                                    organization_id = a.ship_from_org_id
+                                AND
+                                    inventory_item_id = a.inventory_item_id
+                        ),
+                        'AMS2'
+                    ) assembly_method2,
+                    header_id,
+                    line_id,
+                    line_number line_num,
+                    inventory_item_id,
+                    bill_to_cust_id customer_id,
+                    ord_type,
+                    '' validated_flag,
+                    '' sp_wk_flag,
+                    (
+                        SELECT
+                            customer_category
+                        FROM
+                            jan_pick_forward_control
+                        WHERE
+                            bill_to_customer_id = a.bill_to_cust_id
+                    ) customer_category,
+                    (
+                        SELECT
+                            oell.attribute6
+                        FROM
+                            oe_order_lines_all oell
+                        WHERE
+                                oell.header_id = a.header_id
+                            AND
+                                oell.attribute6 IS NOT NULL
+                            AND
+                                ROWNUM = 1
+                    ) cusordno,
+                    (
+                        SELECT
+                            nvl(
+                                DECODE(
+                                    b.attribute10,
+                                    NULL,
+                                    b.attribute11,
+                                    b.attribute10
+                                ),
+                                '-'
+                            )
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) cus_drg_no,
+                    0 sale_qty,
+                    0 no_of_custs,
+                    '' sp_remarks,
+                    '' b3_status,
+                    (
+                        SELECT
+                            attribute10
+                        FROM
+                            oe_order_headers_all
+                        WHERE
+                            header_id = a.header_id
+                    ) web_order_ref_no,
+                    '' branch_target_month,
+                    '' ho_target_month,
+                    '' prod_commit_month,
+                    0 exception_qty,
+                    '' target_mon_final
+                FROM
+                    jan_oa_bin_demand_rsv_n a
+                WHERE
+                        ord_type NOT IN (
+                            'Sales Return - RMA - US','Sales Return - RMA Skyfast','Sales Return - RMA Unit - VI','Sales Return - RMA Unit - VII','Sales Return - RMA Unit I'
+                ,'Sales Return - RMA Unit II','Sales Return - RMA Unit V'
+                        )
+                    AND
+                        line_id NOT IN (
+                            SELECT
+                                line_id
+                            FROM
+                                jan_sp_wk_lines
+                            WHERE
+                                sp_hold_date IS NULL
+                        )
+                    AND
+                        flow_status_code NOT IN (
+                            'CLOSED','CANCELLED','ENTERED'
+                        )
+                    AND
+                        ship_from_org_id IN (
+                            SELECT
+                                organization_id
+                            FROM
+                                org_organization_definitions
+                            WHERE
+                                operating_unit = 103
+                        )
+                    AND
+                        ship_from_org_id NOT IN (
+                            324,364
+                        )
+                    AND
+                        a.ord_ff_dt <= '30-SEP-2026'
+            )
+    -- Inside your query code string
+    ) b WHERE ORDER_NUMBER = :ordId AND parent_region = :parentRegion~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (1, 'Get Sales Plan By Order Id', l_query_text);
+
+    l_query_text := q'~SELECT
+    b.*,
+        CASE
+            WHEN
+                web_order_ref_no = 'DSP Order'
+            AND
+                (
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        jan_sp_dealer_exempt_tab
+                    WHERE
+                        customer_id = b.customer_id
+                ) > 0
+            THEN 'N'
+            ELSE 'Y'
+        END
+    dsp_status
+FROM
+    (
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    (
+                        SELECT
+                            parent_region
+                        FROM
+                            jan_rating_region_mapping
+                        WHERE
+                            region = a.region
+                    ) parent_region,
+                    region sub_region,
+                    bill_cust_name bill_to_cust_name,
+                    (
+                        SELECT
+                            ctb.customer_name
+                        FROM
+                            ra_customers ctb,
+                            ra_addresses_all ads,
+                            ra_site_uses_all sit
+                        WHERE
+                                sit.site_use_id = (
+                                    SELECT
+                                        ship_to_org_id
+                                    FROM
+                                        oe_order_headers_all
+                                    WHERE
+                                        header_id = a.header_id
+                                )
+                            AND
+                                ads.address_id = sit.address_id
+                            AND
+                                ctb.customer_id = ads.customer_id
+                    ) ship_to_cust_name,
+                    ctype,
+                    (
+                        SELECT
+                            jan_orgcode(b.ship_from_org_id)
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) org,
+                    order_number,
+                    (
+                        SELECT
+                            ordered_item
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) ordered_item,
+                    jan_sales_rrs_category(
+                        a.ship_from_org_id,
+                        a.inventory_item_id
+                    ) rrs_cat,
+                    ordered_date,
+                    ordered_quantity oa_qty,
+                    (
+                        SELECT
+                            ( b.ordered_quantity - nvl(b.shipped_quantity,0) )
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) pend_qty,
+                    (
+                        SELECT
+                            ( b.ordered_quantity - nvl(b.shipped_quantity,0) ) * b.unit_selling_price
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) pend_val,
+                    rsv_source,
+                    ord_ff_dt,
+                    schedule_ship_date,
+                    ord_ff_wk,
+                    (
+                        SELECT DISTINCT
+                            description
+                        FROM
+                            mtl_system_items
+                        WHERE
+                                inventory_item_id = a.inventory_item_id
+                            AND
+                                organization_id = a.ship_from_org_id
+                    ) desp,
+                    '' assembly_method,
+                    nvl(
+                        (
+                            SELECT
+                                assembly_method
+                            FROM
+                                jan_mes_product_master
+                            WHERE
+                                    organization_id = a.ship_from_org_id
+                                AND
+                                    inventory_item_id = a.inventory_item_id
+                        ),
+                        'AMS2'
+                    ) assembly_method2,
+                    header_id,
+                    line_id,
+                    line_number line_num,
+                    inventory_item_id,
+                    bill_to_cust_id customer_id,
+                    ord_type,
+                    '' validated_flag,
+                    '' sp_wk_flag,
+                    (
+                        SELECT
+                            customer_category
+                        FROM
+                            jan_pick_forward_control
+                        WHERE
+                            bill_to_customer_id = a.bill_to_cust_id
+                    ) customer_category,
+                    (
+                        SELECT
+                            oell.attribute6
+                        FROM
+                            oe_order_lines_all oell
+                        WHERE
+                                oell.header_id = a.header_id
+                            AND
+                                oell.attribute6 IS NOT NULL
+                            AND
+                                ROWNUM = 1
+                    ) cusordno,
+                    (
+                        SELECT
+                            nvl(
+                                DECODE(
+                                    b.attribute10,
+                                    NULL,
+                                    b.attribute11,
+                                    b.attribute10
+                                ),
+                                '-'
+                            )
+                        FROM
+                            oe_order_lines_all b
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ) cus_drg_no,
+                    0 sale_qty,
+                    0 no_of_custs,
+                    '' sp_remarks,
+                    '' b3_status,
+                    (
+                        SELECT
+                            attribute10
+                        FROM
+                            oe_order_headers_all
+                        WHERE
+                            header_id = a.header_id
+                    ) web_order_ref_no,
+                    '' branch_target_month,
+                    '' ho_target_month,
+                    '' prod_commit_month,
+                    0 exception_qty,
+                    '' target_mon_final
+                FROM
+                    jan_oa_bin_demand_rsv_n a
+                WHERE
+                        ord_type NOT IN (
+                            'Sales Return - RMA - US','Sales Return - RMA Skyfast','Sales Return - RMA Unit - VI','Sales Return - RMA Unit - VII','Sales Return - RMA Unit I'
+                ,'Sales Return - RMA Unit II','Sales Return - RMA Unit V'
+                        )
+                    AND
+                        line_id NOT IN (
+                            SELECT
+                                line_id
+                            FROM
+                                jan_sp_wk_lines
+                            WHERE
+                                sp_hold_date IS NULL
+                        )
+                    AND
+                        flow_status_code NOT IN (
+                            'CLOSED','CANCELLED','ENTERED'
+                        )
+                    AND
+                        ship_from_org_id IN (
+                            SELECT
+                                organization_id
+                            FROM
+                                org_organization_definitions
+                            WHERE
+                                operating_unit = 103
+                        )
+                    AND
+                        ship_from_org_id NOT IN (
+                            324,364
+                        )
+                    AND A.ORDERED_DATE>='01-FEB-2026'  AND 
+                        a.ord_ff_dt <= '30-SEP-2026'
+            )
+    -- Inside your query code string
+    ) b WHERE SUB_REGION like (:parentRegion) AND bill_to_cust_name = :custName~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (2, 'Get Sales Plan By Customer Name', l_query_text);
+
+    l_query_text := q'~SELECT
+        org,
+        rrs_cat,
+        rsv_source,
+        order_item,
+        SUM(pend_qty) pend_qty,
+        constraint,
+        SUM(exception_qty) exception_qty
+    FROM
+        (
+            SELECT
+                (
+                    SELECT
+                        jan_orgcode(ol.ship_from_org_id)
+                    FROM
+                        oe_order_lines_all ol
+                    WHERE
+                            ol.header_id = a.header_id
+                        AND
+                            ol.line_id = a.line_id
+                ) AS org,
+                jan_sales_rrs_category(
+                    a.organization_id,
+                    a.inventory_item_id
+                ) AS rrs_cat,
+                a.rsv_source,
+                (
+                    SELECT
+                        ordered_item
+                    FROM
+                        oe_order_lines_all ol
+                    WHERE
+                            ol.header_id = a.header_id
+                        AND
+                            ol.line_id = a.line_id
+                ) AS order_item,
+                SUM(ol_pend.ordered_quantity - nvl(ol_pend.shipped_quantity,0) ) AS pend_qty,
+                    CASE
+                        WHEN (
+                            SELECT
+                                COUNT(*)
+                            FROM
+                                jan_constraint_item_tab
+                            WHERE
+                                    trunc(creation_date) = (
+                                        SELECT
+                                            MAX(trunc(creation_date) )
+                                        FROM
+                                            jan_constraint_item_tab
+                                    )
+                                AND
+                                    organization_id = a.organization_id
+                                AND
+                                    inventory_item_id = a.inventory_item_id
+                        ) > 0 THEN 'CONSTRAINT'
+                        ELSE 'UN-CONSTRAINT'
+                    END
+                constraint,
+                nvl(
+                    (
+                        SELECT
+                            SUM(exception_qty)
+                        FROM
+                            jan_sp_target_month_guide_tab
+                        WHERE
+                                header_id = a.header_id
+                            AND
+                                line_id = a.line_id
+                    ),
+                    0
+                ) AS exception_qty
+            FROM
+                jan_sp_wk_lines a
+                JOIN oe_order_lines_all ol_pend ON
+                    ol_pend.header_id = a.header_id
+                AND
+                    ol_pend.line_id = a.line_id
+                AND
+                    a.line_id IN (
+                        SELECT
+                            line_id
+                        FROM
+                            oe_order_lines_all
+                        WHERE
+                            flow_status_code NOT IN (
+                                'CLOSED','CANCELLED','ENTERED'
+                            )
+                    )
+                AND
+                    a.sp_hold_date IS NULL
+                AND
+                    a.validated_flag = 'N'
+                AND
+                    a.sp_wk_flag = 'Y'
+                AND
+                    trunc(a.creation_date) <= trunc(SYSDATE)
+                AND
+                    ol_pend.flow_status_code NOT IN (
+                        'CLOSED','CANCELLED','ENTERED'
+                    )
+            GROUP BY
+                a.header_id,
+                a.line_id,
+                a.organization_id,
+                a.inventory_item_id,
+                a.rsv_source
+        )
+    GROUP BY
+        org,
+        rrs_cat,
+        rsv_source,
+        order_item,
+        constraint~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (3, 'Get Sales Plan Consolidated', l_query_text);
+
     l_query_text := q'~SELECT f.*, CASE WHEN EXCEPTION_QTY <= 0 THEN BRANCH_TARGET_MONTH ELSE '' END as TARGET_MON_FINAL FROM (
         SELECT 
             (SELECT PARENT_REGION FROM JAN_RATING_REGION_MAPPING WHERE REGION = A.SUB_REGION) as PARENT_REGION,
@@ -542,7 +1126,7 @@ BEGIN
             FROM
                 jan_sp_wk_lines a
             WHERE
-   
+
                 a.validated_flag = 'N'
             AND
                 a.sp_wk_flag = 'Y' and rsv_source='BIN_RSV'~';
@@ -808,4 +1392,11 @@ BEGIN
 
     COMMIT;
 END;
-/
+Error report -
+ORA-00001: unique constraint (JAN_IT.PK_JAN_QUERY_DEFINITION_DEV) violated
+ORA-06512: at line 237
+00001. 00000 -  "unique constraint (%s.%s) violated"
+*Cause:    An UPDATE or INSERT statement attempted to insert a duplicate key.
+           For Trusted Oracle configured in DBMS MAC mode, you may see
+           this message if a duplicate entry exists at a different level.
+*Action:   Either remove the unique restriction or do not insert the key.

@@ -465,7 +465,7 @@ export const salesPlanApi = {
       .post<any>("/query/execute", {
         QueryNumber: 17,
         InputParameters: {
-          RegionHoCheck: regionStr === "HO" ? "HO" : "OTHER",
+          RegionHoCheck: regionStr === "HO" ? "HO" : "",
           Regions: regionsList,
         },
         EnableServerSideFiltering: false,

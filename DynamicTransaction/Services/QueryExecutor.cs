@@ -55,7 +55,8 @@ public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
             }
 
             // 3. Prepare the command and convert tokens to Oracle syntax (:{Key})
-            string oracleQuery = ReplaceParametersInQuery(query, parameters);
+            var expandedParameters = ExpandCollectionParameters(query, parameters, out var expandedQuery);
+            string oracleQuery = ReplaceParametersInQuery(expandedQuery, expandedParameters);
             using var command = connection.CreateCommand();
             command.CommandText = oracleQuery;
 
@@ -64,7 +65,7 @@ public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
                 command.Transaction = transaction;
             }
 
-            AddTypedParameters(command, parameters);
+            AddTypedParameters(command, expandedParameters);
 
             // 4. Optimize for Managed Oracle client if applicable
             if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
@@ -131,7 +132,8 @@ public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
                 }
             }
 
-            string oracleCountQuery = ReplaceParametersInQuery(countQuery, parameters);
+            var expandedParameters = ExpandCollectionParameters(countQuery, parameters, out var expandedCountQuery);
+            string oracleCountQuery = ReplaceParametersInQuery(expandedCountQuery, expandedParameters);
             using var command = connection.CreateCommand();
             command.CommandText = oracleCountQuery;
 
@@ -140,7 +142,7 @@ public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
                 command.Transaction = transaction;
             }
 
-            AddTypedParameters(command, parameters);
+            AddTypedParameters(command, expandedParameters);
 
             int count;
             if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
@@ -251,6 +253,52 @@ public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
         }
 
         return query;
+    }
+
+    private static JObject ExpandCollectionParameters(
+        string query,
+        JObject parameters,
+        out string expandedQuery)
+    {
+        var expandedParameters = new JObject();
+        expandedQuery = query;
+
+        foreach (var parameter in parameters.Properties())
+        {
+            if (parameter.Value.Type != JTokenType.Array)
+            {
+                expandedParameters[parameter.Name] = parameter.Value.DeepClone();
+                continue;
+            }
+
+            var values = (JArray)parameter.Value;
+            var parameterNames = values.Count == 0
+                ? new[] { $"{parameter.Name}0" }
+                : Enumerable.Range(0, values.Count)
+                    .Select(index => $"{parameter.Name}{index}")
+                    .ToArray();
+
+            var parameterPattern = $@"(?<![A-Za-z0-9_]):{Regex.Escape(parameter.Name)}\b";
+            expandedQuery = Regex.Replace(
+                expandedQuery,
+                parameterPattern,
+                values.Count == 0
+                    ? "(NULL)"
+                    : $"({string.Join(", ", parameterNames.Select(name => $":{name}"))})",
+                RegexOptions.IgnoreCase);
+
+            if (values.Count == 0)
+            {
+                continue;
+            }
+
+            for (var index = 0; index < values.Count; index++)
+            {
+                expandedParameters[parameterNames[index]] = values[index].DeepClone();
+            }
+        }
+
+        return expandedParameters;
     }
 
     private static void AddTypedParameters(IDbCommand command, JObject parameters)
