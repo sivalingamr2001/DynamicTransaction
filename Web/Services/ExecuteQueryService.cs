@@ -1,4 +1,4 @@
-﻿using DynamicTransaction.Interfaces;
+using DynamicTransaction.Interfaces;
 using Newtonsoft.Json.Linq;
 using System.Data;
 using Server.Interfaces;
@@ -13,17 +13,19 @@ public class ExecuteQueryService(IQueryExecutor queryExecutor) : IExecuteQuery
         IDbConnection connection,
         string query,
         JObject parameters,
-        IDbTransaction? transaction = null)
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default)
     {
-        return _queryExecutor.ExecuteQueryWithParametersAsync(connection, query, parameters, transaction);
+        return _queryExecutor.ExecuteQueryWithParametersAsync(connection, query, parameters, transaction, cancellationToken);
     }
 
     public Task<int> GetTotalCountAsync(
         IDbConnection connection,
         string baseQuery,
         JObject parameters,
-        IDbTransaction? transaction = null)
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default)
     {
-        return _queryExecutor.GetTotalCountAsync(connection, baseQuery, parameters, transaction);
+        return _queryExecutor.GetTotalCountAsync(connection, baseQuery, parameters, transaction, cancellationToken);
     }
 }

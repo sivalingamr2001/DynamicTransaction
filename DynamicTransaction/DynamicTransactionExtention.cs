@@ -1,4 +1,4 @@
-﻿using DynamicTransaction.Interfaces;
+using DynamicTransaction.Interfaces;
 using DynamicTransaction.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,11 +10,13 @@ public static class DynamicTransactionExtension
         this IServiceCollection services,
         string defaultConnectionString)
     {
-        services.AddSingleton<IDbConnectionFactory>(_ =>
+        services.AddScoped<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(defaultConnectionString));
 
         services.AddScoped<IQueryExecutor, QueryExecutor>();
         services.AddScoped<IDynamicQueryExecutor, DynamicQueryExecutor>();
+        services.AddScoped<IDapperCommandExecutor, DapperCommandExecutor>();
+        services.AddScoped<ITransactionCommandService, TransactionCommandService>();
 
         return services;
     }
@@ -26,6 +28,8 @@ public static class DynamicTransactionExtension
     {
         services.AddScoped<IQueryExecutor, TExecutor>();
         services.AddSingleton<IDbConnectionFactory, TFactory>();
+        services.AddScoped<IDapperCommandExecutor, DapperCommandExecutor>();
+        services.AddScoped<ITransactionCommandService, TransactionCommandService>();
 
         return services;
     }

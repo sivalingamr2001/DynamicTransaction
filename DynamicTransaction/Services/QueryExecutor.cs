@@ -1,112 +1,227 @@
-﻿using DynamicTransaction.Interfaces;
+using DynamicTransaction.Interfaces;
+using DynamicTransaction.Infrastructure;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DynamicTransaction.Services;
 
-public class QueryExecutor : IQueryExecutor
+/// <summary>
+/// Service implementation of IQueryExecutor.
+/// Provides safe read-only SELECT database executions and rejects modifying keywords (writes) or PL/SQL execution blocks.
+/// </summary>
+public class QueryExecutor(ILogger<QueryExecutor> logger) : IQueryExecutor
 {
-    /// <summary>
-    /// Executes an Oracle SELECT query asynchronously and returns rows as a JSON JArray.
-    /// </summary>
+    private readonly ILogger<QueryExecutor> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+    /// <inheritdoc/>
     public async Task<JArray> ExecuteQueryWithParametersAsync(
         IDbConnection connection,
         string query,
         JObject parameters,
-        IDbTransaction? transaction = null)
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default)
     {
-        var results = new JArray();
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var redactedParams = SafeLogExtensions.RedactParameters(parameters);
 
-        // 1. Ensure connection is open
-        if (connection.State == ConnectionState.Closed)
+        _logger.LogDebug("QueryExecutor.ExecuteQueryWithParametersAsync START. SQL: {Sql}", query);
+        _logger.LogInformation("QueryExecutor.ExecuteQueryWithParametersAsync START. Parameters: {Parameters}", redactedParams);
+
+        try
         {
-            if (connection is System.Data.Common.DbConnection dbConn)
+            // 1. SELECT-only validation
+            ValidateIsSafeSelectQuery(query);
+
+            var results = new JArray();
+
+            // 2. Ensure connection is open
+            if (connection.State == ConnectionState.Closed)
             {
-                await dbConn.OpenAsync();
+                if (connection is System.Data.Common.DbConnection dbConn)
+                {
+                    await dbConn.OpenAsync(cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    connection.Open();
+                }
+            }
+
+            // 3. Prepare the command and convert tokens to Oracle syntax (:{Key})
+            string oracleQuery = ReplaceParametersInQuery(query, parameters);
+            using var command = connection.CreateCommand();
+            command.CommandText = oracleQuery;
+
+            if (transaction != null)
+            {
+                command.Transaction = transaction;
+            }
+
+            AddTypedParameters(command, parameters);
+
+            // 4. Optimize for Managed Oracle client if applicable
+            if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
+            {
+                dynamic oracleCommand = command;
+                using var reader = await oracleCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    AddCurrentRow(reader, results);
+                }
             }
             else
             {
-                connection.Open();
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    AddCurrentRow(reader, results);
+                }
             }
+
+            _logger.LogInformation("QueryExecutor.ExecuteQueryWithParametersAsync SUCCESS. OperationType: SELECT, RowsReturned: {RowsReturned}, DurationMs: {DurationMs}, Success: true",
+                results.Count, sw.ElapsedMilliseconds);
+
+            return results;
         }
-
-        // 2. Prepare the command and convert tokens to Oracle syntax (:{Key})
-        string oracleQuery = ReplaceParametersInQuery(query, parameters);
-        using var command = connection.CreateCommand();
-        command.CommandText = oracleQuery;
-
-        if (transaction != null)
+        catch (Exception ex)
         {
-            command.Transaction = transaction;
+            _logger.LogError(ex, "QueryExecutor.ExecuteQueryWithParametersAsync ERROR. OperationType: SELECT, DurationMs: {DurationMs}, Success: false, ErrorMessage: {ErrorMessage}",
+                sw.ElapsedMilliseconds, ex.Message);
+            throw;
         }
-
-        AddTypedParameters(command, parameters);
-
-        // 3. Optimize for Managed Oracle client if applicable
-        if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
-        {
-            dynamic oracleCommand = command;
-            using var reader = await oracleCommand.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                AddCurrentRow(reader, results);
-            }
-        }
-        else
-        {
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                AddCurrentRow(reader, results);
-            }
-        }
-
-        return results;
     }
 
-    /// <summary>
-    /// Wraps a query into a subquery block and returns the total matching count.
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<int> GetTotalCountAsync(
         IDbConnection connection,
         string baseQuery,
         JObject parameters,
-        IDbTransaction? transaction = null)
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default)
     {
-        var countQuery = ExtractCountQuery(baseQuery);
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var redactedParams = SafeLogExtensions.RedactParameters(parameters);
 
-        if (connection.State == ConnectionState.Closed)
+        _logger.LogDebug("QueryExecutor.GetTotalCountAsync START. SQL: {Sql}", baseQuery);
+        _logger.LogInformation("QueryExecutor.GetTotalCountAsync START. Parameters: {Parameters}", redactedParams);
+
+        try
         {
-            if (connection is System.Data.Common.DbConnection dbConn)
+            // 1. SELECT-only validation
+            ValidateIsSafeSelectQuery(baseQuery);
+
+            var countQuery = ExtractCountQuery(baseQuery);
+
+            if (connection.State == ConnectionState.Closed)
             {
-                await dbConn.OpenAsync();
+                if (connection is System.Data.Common.DbConnection dbConn)
+                {
+                    await dbConn.OpenAsync(cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    connection.Open();
+                }
+            }
+
+            string oracleCountQuery = ReplaceParametersInQuery(countQuery, parameters);
+            using var command = connection.CreateCommand();
+            command.CommandText = oracleCountQuery;
+
+            if (transaction != null)
+            {
+                command.Transaction = transaction;
+            }
+
+            AddTypedParameters(command, parameters);
+
+            int count;
+            if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
+            {
+                dynamic oracleCommand = command;
+                count = Convert.ToInt32(await oracleCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
             }
             else
             {
-                connection.Open();
+                count = Convert.ToInt32(command.ExecuteScalar());
+            }
+
+            _logger.LogInformation("QueryExecutor.GetTotalCountAsync SUCCESS. OperationType: SELECT (COUNT), RowsReturned: 1, DurationMs: {DurationMs}, Success: true",
+                sw.ElapsedMilliseconds);
+
+            return count;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "QueryExecutor.GetTotalCountAsync ERROR. OperationType: SELECT (COUNT), DurationMs: {DurationMs}, Success: false, ErrorMessage: {ErrorMessage}",
+                sw.ElapsedMilliseconds, ex.Message);
+            throw;
+        }
+    }
+
+    // ── Safe SELECT protection validations ───────────────────────────────────────────────────────────────────
+
+    private static void ValidateIsSafeSelectQuery(string sql)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
+        {
+            throw new ArgumentException("SQL query text cannot be null or empty.");
+        }
+
+        var normalizedSql = sql.Trim().ToUpperInvariant();
+
+        // 1. Must start with SELECT or WITH
+        if (!normalizedSql.StartsWith("SELECT") && !normalizedSql.StartsWith("WITH"))
+        {
+            throw new InvalidOperationException("Unauthorized query execution: Only SELECT or WITH CTE SELECT statements are allowed.");
+        }
+
+        // 2. Reject multi-statement query (semicolons outside comments)
+        var cleanedSql = RemoveSqlComments(normalizedSql);
+        if (cleanedSql.Contains(";"))
+        {
+            var parts = cleanedSql.Split(';');
+            var nonCommentsParts = parts.Skip(1).Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (nonCommentsParts.Any())
+            {
+                throw new InvalidOperationException("Unauthorized query execution: Multi-statement queries are strictly prohibited.");
             }
         }
 
-        string oracleCountQuery = ReplaceParametersInQuery(countQuery, parameters);
-        using var command = connection.CreateCommand();
-        command.CommandText = oracleCountQuery;
-
-        if (transaction != null)
+        // 3. Reject forbidden DML/DDL keywords
+        // Tokenize by punctuation/symbols to find exact blocklisted word tokens (to avoid false-positive sub-matches)
+        string[] forbiddenKeywords = new[]
         {
-            command.Transaction = transaction;
-        }
+            "INSERT", "UPDATE", "DELETE", "MERGE", "TRUNCATE", "DROP", "ALTER", "CREATE", 
+            "EXEC", "EXECUTE", "BEGIN", "DECLARE", "REPLACE", "GRANT", "REVOKE"
+        };
 
-        AddTypedParameters(command, parameters);
-
-        if (command.GetType().FullName == "Oracle.ManagedDataAccess.Client.OracleCommand")
+        var words = cleanedSql.Split(new[] { ' ', '\r', '\n', '\t', ',', '(', ')', ';', '=', '<', '>', '+', '-', '*', '/' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var word in words)
         {
-            dynamic oracleCommand = command;
-            return Convert.ToInt32(await oracleCommand.ExecuteScalarAsync());
+            if (forbiddenKeywords.Contains(word))
+            {
+                throw new InvalidOperationException($"Unauthorized query execution: SQL command contains forbidden statement keyword '{word}'.");
+            }
         }
+    }
 
-        return Convert.ToInt32(command.ExecuteScalar());
+    private static string RemoveSqlComments(string sql)
+    {
+        // Strip single-line comments (-- comment)
+        var lineCommentsRegex = new Regex(@"--.*", RegexOptions.None);
+        var noLineComments = lineCommentsRegex.Replace(sql, "");
+
+        // Strip multi-line comments (/* comment */)
+        var multiLineCommentsRegex = new Regex(@"/\*.*?\*/", RegexOptions.Singleline);
+        return multiLineCommentsRegex.Replace(noLineComments, "");
     }
 
     private static void AddCurrentRow(IDataReader reader, JArray results)

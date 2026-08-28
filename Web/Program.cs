@@ -5,6 +5,7 @@ using Server.Infrastructure.Data.ExternalSources;
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .Enrich.FromLogContext()
+    .Enrich.WithProperty("HostName", Environment.MachineName)
     .CreateLogger();
 
 try
