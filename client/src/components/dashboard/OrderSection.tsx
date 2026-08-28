@@ -6,9 +6,10 @@ import DynamicTable from "@/components/DynamicTable"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { RefreshCw, ArrowLeft, Search, FileSpreadsheet } from "lucide-react"
+import { RefreshCw, ArrowLeft, Search, FileSpreadsheet, X } from "lucide-react"
 import type { AgGridReact } from "ag-grid-react"
 import type { ColDef } from "ag-grid-community"
+import { DublicatePopup } from "./DublicatePopup"
 
 interface OrderSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
@@ -17,7 +18,7 @@ interface OrderSectionProps {
 type HODViewType = "consolidated" | "line_breakup" | "full_breakup"
 
 export const OrderSection = ({ withLoader }: OrderSectionProps) => {
-  const { currentRegion } = useAuth()
+  const { currentRegion, currentUser } = useAuth()
   const gridRef = useRef<AgGridReact>(null)
   
   // HOD check: true if region is HO
@@ -34,6 +35,13 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
   // Row data
   const [rowData, setRowData] = useState<any[]>([])
 
+  // Submit target choices & duplicate check states
+  const [isSubmitTargetChoiceOpen, setIsSubmitTargetChoiceOpen] = useState(false)
+  const [isDuplicateOpen, setIsDuplicateOpen] = useState(false)
+  const [duplicateRows, setDuplicateRows] = useState<any[]>([])
+  const [pendingPayload, setPendingPayload] = useState<any[]>([])
+  const [bulkTargetQueue, setBulkTargetQueue] = useState<"sales_plan" | "bin_data" | null>(null)
+
   const columnsHook = useColumns()
 
   // Load HOD Consolidated data
@@ -43,7 +51,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
       setRowData(res.data || [])
     } catch (err: any) {
       console.error(err)
-      toast.error("Failed to load consolidated plans.")
+      toast.error(err?.message || "Failed to load consolidated planning data.")
     }
   }
 
@@ -54,7 +62,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
       setRowData(res.data || [])
     } catch (err: any) {
       console.error(err)
-      toast.error(`Failed to load breakup for ${item}`)
+      toast.error(err?.message || `Failed to load breakup for item ${item}`)
     }
   }
 
@@ -65,97 +73,199 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
       setRowData(res.data || [])
     } catch (err: any) {
       console.error(err)
-      toast.error("Failed to load full breakdowns.")
+      toast.error(err?.message || "Failed to load full breakups list.")
     }
   }
 
-  // Load Branch filtered data
-  const loadBranchPlans = async () => {
+  // Load Branch Detailed plan data
+  const loadBranchOrders = async () => {
     try {
-      // getByordId or custName with parent region
-      const parentRegion = currentRegion?.region || "%"
       const res = await withLoader(() =>
-        salesPlanApi.getSalesPlans(custNameInput, ordItemInput, parentRegion)
+        salesPlanApi.getSalesPlans(custNameInput, ordItemInput, currentRegion?.region || "")
       )
-
-      // Filter client-side by subRegion only if subRegion is defined
-      const subRegion = currentRegion?.subRegion
-      if (subRegion && subRegion !== "%") {
-        const filtered = (res.data || []).filter(
-          (item: any) => item.SUB_REGION === subRegion
-        )
-        setRowData(filtered)
+      // Filter by user's subRegion client-side
+      const sub = currentRegion?.subRegion
+      if (sub && sub !== "HO") {
+        setRowData((res.data || []).filter((item: any) => item.SUB_REGION === sub))
       } else {
         setRowData(res.data || [])
       }
     } catch (err: any) {
       console.error(err)
-      toast.error("Failed to fetch detailed orders.")
+      toast.error(err?.message || "Failed to load branch sales orders.")
     }
   }
 
-  // Orchestrated loader based on current role and view type
-  const loadData = useCallback(() => {
+  // Main data load router
+  const loadData = useCallback(async () => {
     if (isHod) {
       if (hodView === "consolidated") {
-        loadConsolidated()
+        await loadConsolidated()
       } else if (hodView === "line_breakup" && selectedItem) {
-        loadLineBreakup(selectedItem)
+        await loadLineBreakup(selectedItem)
       } else if (hodView === "full_breakup") {
-        loadFullBreakup()
+        await loadFullBreakup()
       }
     } else {
-      loadBranchPlans()
+      await loadBranchOrders()
     }
   }, [isHod, hodView, selectedItem, currentRegion, custNameInput, ordItemInput])
 
-  // Trigger loading when active layout view changes
   useEffect(() => {
     loadData()
-  }, [hodView, isHod, loadData])
+  }, [loadData, hodView, isHod])
 
-  // Handles clicking on item in Consolidated table to drill down
+  // Drilldown handler on Consolidated Item clicks
   const handleCellClicked = (event: any) => {
-    if (isHod && hodView === "consolidated" && event.column.getColId() === "ORDER_ITEM" && event.value) {
-      const itemCode = String(event.value)
-      setSelectedItem(itemCode)
+    if (!isHod || hodView !== "consolidated") return
+    if (event.column.getColId() === "ORDER_ITEM" && event.value) {
+      setSelectedItem(event.value)
       setHodView("line_breakup")
     }
   }
 
-  // Target month save handler (Query 7 & 8)
+  // Trigger target choice modal
   const handleSaveTargetMonths = async () => {
     const selectedNodes = gridRef.current?.api?.getSelectedNodes() || []
     if (selectedNodes.length === 0) {
-      toast.warning("Please select row(s) to update target month.")
+      toast.warning("Please select row(s) to submit in bulk.")
       return
     }
 
-    const payload = selectedNodes
-      .map((node: any) => {
-        const item = node.data
-        return {
-          REGION: item.PARENT_REGION || item.REGION || null,
-          HO_TARGET_MONTH: String(item.HO_TARGET_MONTH || item.TARGET_MON_FINAL || ""),
-          BRANCH_TARGET_MONTH: String(item.BRANCH_TARGET_MONTH || ""),
-          HEADER_ID: Number(item.HEADER_ID),
-          LINE_ID: Number(item.LINE_ID),
-        }
-      })
-      .filter((item) => item.HEADER_ID && item.LINE_ID && item.HO_TARGET_MONTH)
+    if (!isHod) {
+      // Branch user can submit to Sales Plans or Bins
+      setIsSubmitTargetChoiceOpen(true)
+    } else {
+      // HOD user: saves target month configurations directly
+      const payload = selectedNodes
+        .map((node: any) => {
+          const item = node.data
+          return {
+            REGION: item.REGION || item.parentRegion || currentRegion?.region || "HO",
+            HEADER_ID: Number(item.HEADER_ID || item.header_id),
+            LINE_ID: Number(item.LINE_ID || item.line_id),
+            HO_TARGET_MONTH: item.HO_TARGET_MONTH || null,
+          }
+        })
+        .filter((item) => item.HEADER_ID && item.LINE_ID && item.HO_TARGET_MONTH)
 
-    if (payload.length === 0) {
-      toast.error("No valid lines with Header ID, Line ID, and Target Month found in selection.")
-      return
+      if (payload.length === 0) {
+        toast.error("No valid lines with Header ID, Line ID, and Target Month found in selection.")
+        return
+      }
+
+      try {
+        await withLoader(() => salesPlanApi.updateHOTargetMonth(payload))
+        toast.success("Target months updated successfully.")
+        loadData()
+      } catch (err: any) {
+        console.error(err)
+        toast.error(err?.message || "Failed to update target months.")
+      }
     }
+  }
+
+  // Handle selected queue choice
+  const handleChoiceSelection = async (target: "sales_plan" | "bin_data") => {
+    setIsSubmitTargetChoiceOpen(false)
+    setBulkTargetQueue(target)
+
+    const selectedNodes = gridRef.current?.api?.getSelectedNodes() || []
+    const selectedRows = selectedNodes.map((n) => n.data)
 
     try {
-      await withLoader(() => salesPlanApi.updateHOTargetMonth(payload))
-      toast.success("Target months updated successfully.")
+      let existingData: any[] = []
+      if (target === "sales_plan") {
+        const res = await withLoader(() => salesPlanApi.getSalesPlans("", "", currentRegion?.region || ""))
+        existingData = res.data || []
+      } else {
+        const res = await withLoader(() => salesPlanApi.getAllBins(currentRegion?.region || ""))
+        existingData = res.data || []
+      }
+
+      // Detect duplicates matching line_id
+      const duplicates = selectedRows.filter((row) => {
+        const rowId = Number(row.LINE_ID || row.line_id)
+        return existingData.some((item) => Number(item.LINE_ID || item.line_id) === rowId)
+      })
+
+      if (duplicates.length > 0) {
+        setDuplicateRows(duplicates)
+        setPendingPayload(selectedRows)
+        setIsDuplicateOpen(true)
+      } else {
+        // Submit directly
+        await executeBulkInsert(selectedRows, target)
+      }
+    } catch (err: any) {
+      console.error(err)
+      toast.error("Failed to query duplicate records list.")
+    }
+  }
+
+  // Skip duplicates and submit rest
+  const handleConfirmSkipDuplicates = async () => {
+    setIsDuplicateOpen(false)
+    if (!bulkTargetQueue) return
+
+    const duplicatesLineIds = new Set(duplicateRows.map((r) => Number(r.LINE_ID || r.line_id)))
+    const remaining = pendingPayload.filter((row) => !duplicatesLineIds.has(Number(row.LINE_ID || row.line_id)))
+
+    if (remaining.length === 0) {
+      toast.warning("All selected rows are duplicates. Nothing left to submit.")
+      return
+    }
+
+    await executeBulkInsert(remaining, bulkTargetQueue)
+    setDuplicateRows([])
+    setPendingPayload([])
+    setBulkTargetQueue(null)
+  }
+
+  // Bulk Insert Execution
+  const executeBulkInsert = async (rowsToSubmit: any[], target: "sales_plan" | "bin_data") => {
+    const payload = rowsToSubmit.map((row) => ({
+      REGION: currentRegion?.region || row.REGION || row.parentRegion || null,
+      SUB_REGION: currentRegion?.subRegion || row.SUB_REGION || null,
+      ORG: row.ORG || "JHP",
+      ORDERED_ITEM: row.ORDERED_ITEM || row.ORDER_ITEM || row.itemNo || null,
+      RRS_CAT: row.RRS_CAT || "NORMAL",
+      OA_QTY: Number(row.OA_QTY || 0),
+      RSV_SOURCE: row.RSV_SOURCE || "BRANCH_PLAN",
+      ORD_FF_DT: row.ORD_FF_DT || null,
+      ORD_FF_WK: row.ORD_FF_WK || null,
+      SCHEDULE_SHIP_DATE: row.SCHEDULE_SHIP_DATE || null,
+      HEADER_ID: Number(row.HEADER_ID || 0),
+      LINE_ID: Number(row.LINE_ID || 0),
+      LINE_NUM: Number(row.LINE_NUM || 0),
+      INVENTORY_ITEM_ID: Number(row.INVENTORY_ITEM_ID || 0),
+      CUSTOMER_ID: Number(row.CUSTOMER_ID || 0),
+      ORDER_NUMBER: Number(row.ORDER_NUMBER || 0),
+      ORDERED_DATE: row.ORDERED_DATE || null,
+      BILL_TO_CUST_NAME: row.BILL_TO_CUST_NAME || null,
+      ORD_TYPE: row.ORD_TYPE || null,
+      ASSEMBLY_METHOD2: row.ASSEMBLY_METHOD2 || null,
+      PEND_QTY: Number(row.PEND_QTY || 0),
+      ASSEMBLY_METHOD: row.ASSEMBLY_METHOD || null,
+      BRANCH_TARGET_MONTH: row.BRANCH_TARGET_MONTH || row.TARGET_MON_FINAL || null,
+      TARGET_MON_FINAL: row.TARGET_MON_FINAL || null,
+      COM_PRODUCT_FLAG: row.COM_PRODUCT_FLAG || null,
+      APP_BY_NAME: row.APP_BY_NAME || currentUser?.username || "admin",
+      SET_NAME: row.SET_NAME || "BRANCH_BULK",
+    }))
+
+    try {
+      if (target === "sales_plan") {
+        await withLoader(() => salesPlanApi.insertSalesPlans(payload))
+        toast.success(`Successfully submitted ${payload.length} rows to Sales Plan queue.`)
+      } else {
+        await withLoader(() => salesPlanApi.insertBinData(payload))
+        toast.success(`Successfully submitted ${payload.length} rows to Replenishment Bins queue.`)
+      }
       loadData()
     } catch (err: any) {
       console.error(err)
-      toast.error(err?.message || "Failed to update target months.")
+      toast.error(err?.message || "Failed to submit bulk data.")
     }
   }
 
@@ -174,7 +284,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
   const getHeaderTitle = () => {
     if (!isHod) return `Branch Sales Orders (${currentRegion?.subRegion || currentRegion?.region || "Local"})`
     if (hodView === "consolidated") return "Consolidated Order Planning"
-    if (hodView === "line_breakup") return `Line Breakup: ${selectedItem}`
+    if (hodView === "line_breakup" && selectedItem) return `Line Breakup: ${selectedItem}`
     return "Full Order Breakups"
   }
 
@@ -322,6 +432,65 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
           onCellClicked={handleCellClicked}
         />
       </div>
+
+      {/* Choice Modal for Submit Target Queue */}
+      {isSubmitTargetChoiceOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-[400px] rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-black tracking-tight text-slate-800 uppercase">
+                Submit Bulk Dataset
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsSubmitTargetChoiceOpen(false)}
+                className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed">
+              Please choose which queue you want to submit the selected sales plan lines to:
+            </p>
+
+            <div className="flex flex-col gap-2.5">
+              <Button
+                onClick={() => handleChoiceSelection("sales_plan")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold w-full"
+              >
+                Submit to Sales Plan Queue
+              </Button>
+              <Button
+                onClick={() => handleChoiceSelection("bin_data")}
+                className="bg-amber-600 hover:bg-amber-700 text-white font-semibold w-full"
+              >
+                Submit to Replenishment Bins Queue
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsSubmitTargetChoiceOpen(false)}
+                className="border-slate-300 text-slate-600 w-full"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Duplicate Check Warning Popup */}
+      <DublicatePopup
+        isOpen={isDuplicateOpen}
+        onClose={() => {
+          setIsDuplicateOpen(false)
+          setDuplicateRows([])
+          setPendingPayload([])
+          setBulkTargetQueue(null)
+        }}
+        onConfirmSkip={handleConfirmSkipDuplicates}
+        duplicates={duplicateRows}
+      />
     </div>
   )
 }

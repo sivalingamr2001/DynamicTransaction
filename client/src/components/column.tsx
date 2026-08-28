@@ -8,6 +8,7 @@ import type {
 import { formatDateString, formatMonthCapsule, getCurrentTargetMonthOptions } from "@/lib/utils"
 import type { ColDef } from "ag-grid-community"
 import { useMemo } from "react"
+import { OrderedItemHover } from "./dashboard/OrderedItemHover"
 import { toast } from "sonner"
 
 export function useColumns() {
@@ -108,6 +109,9 @@ export function useColumns() {
         headerName: "Ordered Item",
         filter: true,
         width: 140,
+        cellRenderer: (params: any) => (
+          <OrderedItemHover value={params.value} data={params.data} />
+        ),
       },
       {
         field: "DESP",
@@ -204,6 +208,9 @@ export function useColumns() {
         flex: 1,
         cellClass: "font-semibold text-blue-600 cursor-pointer",
         filter: "agTextColumnFilter",
+        cellRenderer: (params: any) => (
+          <OrderedItemHover value={params.value} data={params.data} />
+        ),
       },
       { field: "CONSTRAINT", headerName: "Constraint", flex: 1 },
       {

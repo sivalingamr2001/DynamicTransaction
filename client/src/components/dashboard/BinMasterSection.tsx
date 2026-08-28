@@ -6,12 +6,13 @@ import { useColumns } from "@/components/column"
 import { useAuth } from "@/context/AuthContext"
 import DynamicTable from "@/components/DynamicTable"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { toast } from "sonner"
-import { RefreshCw, FileSpreadsheet, CheckCircle2, Plus, X } from "lucide-react"
+import { RefreshCw, FileSpreadsheet, CheckCircle2, Plus, Trash2 } from "lucide-react"
 import type { AgGridReact } from "ag-grid-react"
 import type { ColDef } from "ag-grid-community"
+import { CreateBin } from "./CreateBin"
+import { DeleteConfirm } from "./DeleteConfirm"
 
 interface BinMasterSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
@@ -49,6 +50,11 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
   const [newBinLocation, setNewBinLocation] = useState("")
   const [customerSearchTerm, setCustomerSearchTerm] = useState("")
   const [itemSearchTerm, setItemSearchTerm] = useState("")
+
+  // Delete bin master confirmation states
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [selectedRepId, setSelectedRepId] = useState<number | null>(null)
+  const [selectedItemNo, setSelectedItemNo] = useState("")
 
   // Load regions details on mount
   useEffect(() => {
@@ -104,7 +110,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
   const loadData = useCallback(async () => {
     try {
       if (subView === "all_bins") {
-        const res = await withLoader(() => salesPlanApi.getCustomerReplenishmentBins(regionFilter))
+        const res = await withLoader(() => salesPlanApi.getAllBins(regionFilter))
         setRowData(res.data || [])
       } else {
         const res = await withLoader(() => salesPlanApi.getPendingRepBins())
@@ -159,6 +165,44 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
     } catch (err: any) {
       console.error(err)
       toast.error(err?.message || "Failed to create bin master record.")
+    }
+  }
+
+  // Trigger Delete Modal
+  const handleDeleteClick = () => {
+    const selectedNodes = gridRef.current?.api?.getSelectedNodes() || []
+    if (selectedNodes.length !== 1) {
+      toast.warning("Select exactly one row to delete.")
+      return
+    }
+
+    const repId = Number(selectedNodes[0].data.REP_ID || selectedNodes[0].data.rep_id)
+    const itemNo = String(selectedNodes[0].data.ITEM_NO || selectedNodes[0].data.item_no || "")
+    if (!repId) return
+
+    setSelectedRepId(repId)
+    setSelectedItemNo(itemNo)
+    setIsDeleteOpen(true)
+  }
+
+  // Delete Bin Master record (Query 14)
+  const handleDeleteConfirm = async (reason: string) => {
+    if (!selectedRepId) return
+    try {
+      await withLoader(() =>
+        salesPlanApi.deleteBinMasterData({
+          REP_ID: selectedRepId,
+          reason: reason.trim(),
+        })
+      )
+      toast.success("Bin master record deleted successfully.")
+      setIsDeleteOpen(false)
+      setSelectedRepId(null)
+      setSelectedItemNo("")
+      loadData()
+    } catch (err: any) {
+      console.error(err)
+      toast.error(err?.message || "Failed to delete bin record.")
     }
   }
 
@@ -237,14 +281,26 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
         {/* Action Controls */}
         <div className="flex items-center gap-2">
           {subView === "all_bins" && (
-            <Button
-              onClick={() => setIsCreateOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-              size="sm"
-            >
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              Create Bin
-            </Button>
+            <>
+              <Button
+                onClick={() => setIsCreateOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                size="sm"
+              >
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                Create Bin
+              </Button>
+
+              <Button
+                variant="destructive"
+                onClick={handleDeleteClick}
+                className="font-semibold shadow-sm"
+                size="sm"
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-1" />
+                Delete Bin
+              </Button>
+            </>
           )}
 
           {subView === "pending_bins" && (
@@ -311,165 +367,38 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
       </div>
 
       {/* Create Bin modal popup dialog */}
-      {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-[500px] rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-sm font-black tracking-tight text-slate-800 uppercase">
-                  Create Replenishment Bin
-                </h3>
-                <p className="text-[10px] text-slate-400 mt-0.5">
-                  Region: {regionFilter} | Add new bin data master
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsCreateOpen(false)}
-                className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+      <CreateBin
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onSubmit={handleCreateSubmit}
+        regionFilter={regionFilter}
+        customerSearchTerm={customerSearchTerm}
+        setCustomerSearchTerm={setCustomerSearchTerm}
+        regionCustomers={regionCustomers}
+        newBinCustomer={newBinCustomer}
+        setNewBinCustomer={setNewBinCustomer}
+        itemSearchTerm={itemSearchTerm}
+        setItemSearchTerm={setItemSearchTerm}
+        inventoryItems={inventoryItems}
+        newBinItem={newBinItem}
+        setNewBinItem={setNewBinItem}
+        newBinTbrQty={newBinTbrQty}
+        setNewBinTbrQty={setNewBinTbrQty}
+        newBinStockType={newBinStockType}
+        setNewBinStockType={setNewBinStockType}
+        newBinCat={newBinCat}
+        setNewBinCat={setNewBinCat}
+        newBinLocation={newBinLocation}
+        setNewBinLocation={setNewBinLocation}
+      />
 
-            <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
-              {/* Region Customer Lookup */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  1. Region Customer
-                </label>
-                <Input
-                  placeholder="Filter customer name..."
-                  value={customerSearchTerm}
-                  onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                  className="border-slate-300 bg-white"
-                />
-                <NativeSelect
-                  value={newBinCustomer?.CUSTOMER_ID ?? ""}
-                  onChange={(e) => {
-                    const cust = regionCustomers.find(
-                      (c) => c.CUSTOMER_ID === Number(e.target.value)
-                    )
-                    setNewBinCustomer(cust || null)
-                  }}
-                  className="w-full mt-1.5"
-                >
-                  <NativeSelectOption value="">-- Select Customer --</NativeSelectOption>
-                  {regionCustomers.map((cust) => (
-                    <NativeSelectOption key={cust.CUSTOMER_ID} value={cust.CUSTOMER_ID}>
-                      {cust.CUSTOMER_NAME} ({cust.CUSTOMER_ID})
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
-
-              {/* Inventory Item Lookup */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  2. Inventory Item No
-                </label>
-                <Input
-                  placeholder="Filter item code or desc..."
-                  value={itemSearchTerm}
-                  onChange={(e) => setItemSearchTerm(e.target.value)}
-                  className="border-slate-300 bg-white"
-                />
-                <NativeSelect
-                  value={newBinItem?.INVENTORY_ITEM_ID ?? ""}
-                  onChange={(e) => {
-                    const item = inventoryItems.find(
-                      (i) => i.INVENTORY_ITEM_ID === Number(e.target.value)
-                    )
-                    setNewBinItem(item || null)
-                  }}
-                  className="w-full mt-1.5"
-                >
-                  <NativeSelectOption value="">-- Select Master Item --</NativeSelectOption>
-                  {inventoryItems.map((item) => (
-                    <NativeSelectOption key={item.INVENTORY_ITEM_ID} value={item.INVENTORY_ITEM_ID}>
-                      {item.ITEM_NO} - {item.DESCRIPTION.substring(0, 45)}...
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
-
-              {/* Quantities & Location fields */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase">
-                    3. TBR Qty (Bin Size)
-                  </label>
-                  <Input
-                    type="number"
-                    value={newBinTbrQty}
-                    onChange={(e) => setNewBinTbrQty(Number(e.target.value) || 0)}
-                    min={0}
-                    className="border-slate-300 bg-white"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase">
-                    4. Stock Type
-                  </label>
-                  <NativeSelect
-                    value={newBinStockType}
-                    onChange={(e) => setNewBinStockType(e.target.value)}
-                    className="w-full font-semibold"
-                  >
-                    <NativeSelectOption value="FG">Finished Goods (FG)</NativeSelectOption>
-                    <NativeSelectOption value="FC">Forecast (FC)</NativeSelectOption>
-                    <NativeSelectOption value="BUFFER">Buffer Stock</NativeSelectOption>
-                  </NativeSelect>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase">
-                    5. Bin Category
-                  </label>
-                  <NativeSelect
-                    value={newBinCat}
-                    onChange={(e) => setNewBinCat(e.target.value)}
-                    className="w-full font-semibold"
-                  >
-                    <NativeSelectOption value="NORMAL">NORMAL</NativeSelectOption>
-                    <NativeSelectOption value="CRITICAL">CRITICAL</NativeSelectOption>
-                    <NativeSelectOption value="EMERGENCY">EMERGENCY</NativeSelectOption>
-                  </NativeSelect>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase">
-                    6. Bin Location
-                  </label>
-                  <Input
-                    placeholder="Location details..."
-                    value={newBinLocation}
-                    onChange={(e) => setNewBinLocation(e.target.value)}
-                    className="border-slate-300 bg-white"
-                  />
-                </div>
-              </div>
-
-              {/* Submit actions */}
-              <div className="mt-4 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateOpen(false)}
-                  className="border-slate-300 text-slate-600"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold">
-                  Submit Bin
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation modal dialog */}
+      <DeleteConfirm
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        recordTitle={`Bin Item ${selectedItemNo}`}
+      />
     </div>
   )
 }
-
