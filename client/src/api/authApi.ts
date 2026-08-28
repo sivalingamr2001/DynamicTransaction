@@ -22,11 +22,27 @@ export const loginApi = async ( //Query numer 28
   username: string,
   password?: string
 ): Promise<RegionDetailsDto> => {
-  const response = await apiClient.post<RegionDetailsDto>("/Auth/login", {
-    username,
-    password,
+  const response = await apiClient.post<any>("/query/execute", {
+    QueryNumber: 28,
+    InputParameters: {
+      Uname: username,
+      Password: password || "",
+    },
+    EnableServerSideFiltering: false,
+    Count: 1,
+    PageNumber: 1,
   })
-  return response.data
+
+  const list = response.data.data ?? response.data.Data ?? []
+  if (list.length === 0) {
+    throw new Error("Invalid username or password.")
+  }
+
+  const first = list[0]
+  return {
+    region: first.Region ?? first.REGION ?? "HO",
+    subRegion: first.SubRegion ?? first.SUBREGION ?? "HO",
+  }
 }
 
 /**
@@ -34,8 +50,19 @@ export const loginApi = async ( //Query numer 28
  * Get all regions and sub-regions
  */
 export const getRegions = async (): Promise<Region[]> => { //Query numer 29
-  const { data } = await apiClient.get<Region[]>("/regions")
-  return data
+  const response = await apiClient.post<any>("/query/execute", {
+    QueryNumber: 15,
+    InputParameters: {},
+    EnableServerSideFiltering: false,
+    Count: 1000,
+    PageNumber: 1,
+  })
+
+  const list = response.data.data ?? response.data.Data ?? []
+  return list.map((item: any) => ({
+    region: item.Region ?? item.REGION ?? "",
+    subRegion: item.SubRegion ?? item.SUBREGION ?? "",
+  }))
 }
 
 /**
@@ -46,25 +73,31 @@ export const getCustomerNameByRegion = async ( //Query numer 30
   region: string,
   searchTerm = ""
 ): Promise<RegionCustomer[]> => {
-  const { data } = await apiClient.post<
-    RegionCustomer[] | { data?: RegionCustomer[]; result?: RegionCustomer[] }
-  >(
-    "/Auth/get-customer-name-by-region",
-    { Region: region, SearchTerm: searchTerm },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  )
-
-  if (Array.isArray(data)) return data
-  if (data && typeof data === "object") {
-    const candidate =
-      (data as Record<string, unknown>).data ??
-      (data as Record<string, unknown>).result
-    return Array.isArray(candidate) ? (candidate as RegionCustomer[]) : []
+  const isNoFilter = region === "HO" || region === "%" || !region
+  const queryNum = isNoFilter ? 29 : 30
+  
+  const inputParams: Record<string, any> = {
+    searchTerm,
+  }
+  if (!isNoFilter) {
+    inputParams.region = region
   }
 
-  return []
+  const response = await apiClient.post<any>("/query/execute", {
+    QueryNumber: queryNum,
+    InputParameters: inputParams,
+    EnableServerSideFiltering: false,
+    Count: 100000,
+    PageNumber: 1,
+  })
+
+  const list = response.data.data ?? response.data.Data ?? []
+  return list.map((item: any) => ({
+    CUSTOMER_ID: Number(item.CUSTOMER_ID ?? item.customer_id ?? 0),
+    CUSTOMER_NAME: String(item.CUSTOMER_NAME ?? item.customer_name ?? ""),
+    REGION: item.REGION ?? item.region ?? null,
+    CUSTOMER_CATEGORY: item.CUSTOMER_CATEGORY ?? item.customer_category ?? null,
+    CUSTOMER_CLASS_CODE: item.CUSTOMER_CLASS_CODE ?? item.customer_class_code ?? null,
+  }))
 }
+

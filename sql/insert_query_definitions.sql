@@ -1,4 +1,4 @@
-﻿-- Sales-plan query definitions for JAN_QUERY_DEFINITION_DEV
+-- Sales-plan query definitions for JAN_QUERY_DEFINITION_DEV
 -- Generated from Web/Infrastructure/Data/Queries/SalesPlanQueries.cs
 -- Confirm the target table has QUERY_NUMBER, DESCRIPTION, and QUERY_TEXT columns before running.
 
@@ -805,6 +805,59 @@ BEGIN
         LAST_UPDATE_DATE = TO_DATE('06-03-25', 'DD-MM-YY')
         WHERE rep_id = :RepId AND end_date is null~';
     INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (27, 'Update Replenishment Bin', l_query_text);
+
+    -- Auth Queries
+    l_query_text := q'~SELECT 
+                TER_NAME AS Region, 
+                DR_REGION AS SubRegion 
+            FROM jan_bms_login_v 
+            WHERE UNAME = :Uname AND PWD = :Password~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (28, 'Get Region Details After Login', l_query_text);
+
+    l_query_text := q'~SELECT DISTINCT
+        ra.customer_id,
+        ra.customer_name,
+        (SELECT customer_category FROM jan_pick_forward_control WHERE bill_to_customer_id = ra.customer_id AND ROWNUM = 1) customer_category
+    FROM
+        ra_customers ra
+        INNER JOIN ra_addresses_all ad ON ra.customer_id = ad.customer_id
+        INNER JOIN ra_site_uses_all ras ON
+            ad.address_id = ras.address_id
+        AND
+            ras.site_use_code = 'BILL_TO'
+        INNER JOIN ra_territories rt ON ras.territory_id = rt.territory_id
+    WHERE 
+        LOWER(ra.customer_name) LIKE '%' || LOWER(:searchTerm) || '%'~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (29, 'Get Customers No Filter By Search', l_query_text);
+
+    l_query_text := q'~SELECT DISTINCT
+    customer_id,
+    customer_name,
+    region
+FROM
+    (
+        SELECT
+            ra.customer_id,
+            ra.customer_name,
+            (
+                SELECT segment14 FROM ra_territories WHERE territory_id = ras.territory_id
+            ) region
+        FROM
+            ra_customers ra,
+            ra_addresses_all ad,
+            ra_site_uses_all ras
+        WHERE
+                ra.customer_id = ad.customer_id
+            AND
+                ad.address_id = ras.address_id
+            AND
+                ras.site_use_code = 'BILL_TO'
+    )
+WHERE
+    LOWER(customer_name) LIKE '%' || LOWER(:searchTerm) || '%'
+    AND region = :region
+ORDER BY customer_name ASC~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (30, 'Get Customer Name By Region And Search', l_query_text);
 
     COMMIT;
 END;
