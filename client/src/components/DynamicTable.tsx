@@ -8,7 +8,7 @@ import {
   type SelectionChangedEvent,
 } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
-import { Loader } from "./Loader"
+
 import { type ForwardedRef, forwardRef } from "react"
 
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([AllCommunityModule])
 interface DynamicTableProps {
   rowData: any[]
   columnDefs: ColDef[]
-  loading?: boolean
+
   pagination?: boolean
   paginationPageSize?: number
   rowSelection?: "single" | "multiple"
@@ -31,7 +31,7 @@ const DynamicTable = forwardRef(
     {
       rowData,
       columnDefs,
-      loading = false,
+
       pagination = true,
       paginationPageSize = 100,
       rowSelection = "multiple",
@@ -44,12 +44,6 @@ const DynamicTable = forwardRef(
   ) => {
     return (
       <div className="relative h-full w-full min-h-0 flex-1">
-        {loading && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-[1px]">
-            <Loader isText={false} />
-          </div>
-        )}
-
         <div className="ag-theme-quartz h-full w-full">
           <AgGridReact
             ref={ref}

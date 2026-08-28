@@ -12,12 +12,11 @@ import type { ColDef } from "ag-grid-community"
 
 interface BinMasterSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
-  loading: boolean
 }
 
 type SubViewType = "all_bins" | "pending_bins"
 
-export const BinMasterSection = ({ withLoader, loading }: BinMasterSectionProps) => {
+export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
   const { currentUser, currentRegion } = useAuth()
   const gridRef = useRef<AgGridReact>(null)
 
@@ -205,7 +204,6 @@ export const BinMasterSection = ({ withLoader, loading }: BinMasterSectionProps)
           ref={gridRef}
           rowData={rowData}
           columnDefs={getActiveColumns()}
-          loading={loading}
         />
       </div>
     </div>

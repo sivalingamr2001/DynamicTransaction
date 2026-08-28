@@ -9,10 +9,9 @@ import type { AgGridReact } from "ag-grid-react"
 
 interface SpBinPendSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
-  loading: boolean
 }
 
-export const SpBinPendSection = ({ withLoader, loading }: SpBinPendSectionProps) => {
+export const SpBinPendSection = ({ withLoader }: SpBinPendSectionProps) => {
   const gridRef = useRef<AgGridReact>(null)
 
   // Data state
@@ -122,7 +121,6 @@ export const SpBinPendSection = ({ withLoader, loading }: SpBinPendSectionProps)
           ref={gridRef}
           rowData={rowData}
           columnDefs={columnsHook.pendBinColumn}
-          loading={loading}
         />
       </div>
     </div>

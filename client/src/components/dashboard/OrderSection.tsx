@@ -12,12 +12,11 @@ import type { ColDef } from "ag-grid-community"
 
 interface OrderSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
-  loading: boolean
 }
 
 type HODViewType = "consolidated" | "line_breakup" | "full_breakup"
 
-export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
+export const OrderSection = ({ withLoader }: OrderSectionProps) => {
   const { currentRegion } = useAuth()
   const gridRef = useRef<AgGridReact>(null)
   
@@ -284,7 +283,6 @@ export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
           ref={gridRef}
           rowData={rowData}
           columnDefs={getActiveColumns()}
-          loading={loading}
           onCellClicked={handleCellClicked}
         />
       </div>

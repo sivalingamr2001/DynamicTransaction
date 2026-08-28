@@ -61,10 +61,10 @@ export const DashboardPage = () => {
 
       {/* Section Viewport Container */}
       <main className="flex-1 min-h-0 overflow-hidden relative">
-        {activeTab === "order" && <OrderSection withLoader={withLoader} loading={loading} />}
-        {activeTab === "bin_master" && <BinMasterSection withLoader={withLoader} loading={loading} />}
-        {activeTab === "bin_sp" && <BinSpSection withLoader={withLoader} loading={loading} />}
-        {activeTab === "sp_bin_pend" && <SpBinPendSection withLoader={withLoader} loading={loading} />}
+        {activeTab === "order" && <OrderSection withLoader={withLoader} />}
+        {activeTab === "bin_master" && <BinMasterSection withLoader={withLoader} />}
+        {activeTab === "bin_sp" && <BinSpSection withLoader={withLoader} />}
+        {activeTab === "sp_bin_pend" && <SpBinPendSection withLoader={withLoader} />}
       </main>
     </div>
   )

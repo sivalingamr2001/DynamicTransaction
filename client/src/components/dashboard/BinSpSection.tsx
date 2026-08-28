@@ -15,10 +15,9 @@ import type { AgGridReact } from "ag-grid-react"
 
 interface BinSpSectionProps {
   withLoader: <T>(fn: () => Promise<T>) => Promise<T>
-  loading: boolean
 }
 
-export const BinSpSection = ({ withLoader, loading }: BinSpSectionProps) => {
+export const BinSpSection = ({ withLoader }: BinSpSectionProps) => {
   const { currentUser, currentRegion } = useAuth()
   const gridRef = useRef<AgGridReact>(null)
 
@@ -337,7 +336,6 @@ export const BinSpSection = ({ withLoader, loading }: BinSpSectionProps) => {
           ref={gridRef}
           rowData={rowData}
           columnDefs={columnsHook.binColumns}
-          loading={loading}
         />
       </div>
 
