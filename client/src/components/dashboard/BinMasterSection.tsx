@@ -112,40 +112,30 @@ export const BinMasterSection = ({ withLoader, loading }: BinMasterSectionProps)
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Header controls for Bin Master */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
         <div className="flex items-center gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black tracking-tight text-slate-800 uppercase">
-                Bin Master Registry
-              </h2>
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 border border-slate-200">
-                {rowData.length} records
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400">
-              {subView === "all_bins" ? "Browse active replenishment bin registers" : "Awaiting approval list"}
-            </p>
-          </div>
+          <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
+            Bin Master Registry
+          </h2>
 
           {/* Sub Tab View toggle */}
-          <div className="flex items-center rounded-lg bg-slate-100 p-0.5 border border-slate-200 ml-4">
+          <div className="flex items-center rounded-md bg-slate-100 p-0.5 border border-slate-200 ml-2 shadow-sm">
             <button
               onClick={() => setSubView("all_bins")}
-              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all ${
+              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
                 subView === "all_bins"
                   ? "bg-white text-blue-600 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
+                  : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50"
               }`}
             >
               All Bins
             </button>
             <button
               onClick={() => setSubView("pending_bins")}
-              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all ${
+              className={`rounded px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
                 subView === "pending_bins"
                   ? "bg-white text-blue-600 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
+                  : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50"
               }`}
             >
               Pending Bins

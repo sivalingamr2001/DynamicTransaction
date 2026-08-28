@@ -79,20 +79,10 @@ export const SpBinPendSection = ({ withLoader, loading }: SpBinPendSectionProps)
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Header controls */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-black tracking-tight text-slate-800 uppercase">
-              Pending SP Bins Reservation Queue
-            </h2>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 border border-slate-200">
-              {rowData.length} records
-            </span>
-          </div>
-          <p className="text-[10px] text-slate-400">
-            Query 13 - Awaiting head office allocations and reservations
-          </p>
-        </div>
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+        <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
+          Pending SP Bins Reservation Queue
+        </h2>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">

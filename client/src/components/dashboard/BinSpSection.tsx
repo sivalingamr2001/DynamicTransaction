@@ -248,20 +248,10 @@ export const BinSpSection = ({ withLoader, loading }: BinSpSectionProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Action Header bar */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-black tracking-tight text-slate-800 uppercase">
-              Replenishment Bins (Update Mode)
-            </h2>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 border border-slate-200">
-              {rowData.length} records
-            </span>
-          </div>
-          <p className="text-[10px] text-slate-400">
-            Edit replenishment values and configure target months or category flags
-          </p>
-        </div>
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+        <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
+          Replenishment Bins (Update Mode)
+        </h2>
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
@@ -343,9 +333,6 @@ export const BinSpSection = ({ withLoader, loading }: BinSpSectionProps) => {
 
       {/* Grid container */}
       <div className="flex-1 min-h-0 p-4">
-        <div className="mb-2 rounded-lg bg-blue-50/50 p-2.5 border border-blue-200/40 text-[10px] text-blue-700">
-          <strong>Config Tip:</strong> Select rows with checkboxes to save changes. Input boxes and monthly capsule selectors will automatically register modifications on row data.
-        </div>
         <DynamicTable
           ref={gridRef}
           rowData={rowData}

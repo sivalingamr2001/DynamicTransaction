@@ -182,7 +182,7 @@ export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
       {/* Top action header for Order section */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
         <div className="flex items-center gap-3">
           {isHod && hodView !== "consolidated" && (
             <Button
@@ -195,21 +195,9 @@ export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
               Back
             </Button>
           )}
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black tracking-tight text-slate-800 uppercase">
-                {getHeaderTitle()}
-              </h2>
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 border border-slate-200">
-                {rowData.length} records
-              </span>
-            </div>
-            <p className="text-[10px] text-slate-400">
-              {isHod
-                ? "HO role consolidate and breakup workspace"
-                : "Branch role specific order tracking"}
-            </p>
-          </div>
+          <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
+            {getHeaderTitle()}
+          </h2>
         </div>
 
         {/* Action Controls */}
@@ -260,7 +248,7 @@ export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
 
       {/* Branch search filter panel */}
       {!isHod && (
-        <div className="flex shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6 py-2.5">
+        <div className="flex shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6 py-2">
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] font-bold text-slate-500">Customer:</span>
             <Input
@@ -292,11 +280,6 @@ export const OrderSection = ({ withLoader, loading }: OrderSectionProps) => {
 
       {/* Table grid area */}
       <div className="flex-1 min-h-0 p-4">
-        {isHod && hodView === "consolidated" && (
-          <div className="mb-2 rounded-lg bg-blue-50/50 p-2.5 border border-blue-200/40 text-[10px] text-blue-700">
-            <strong>Consolidated view:</strong> Click on any underlined blue <strong>Ordered Item</strong> in the table below to open its specific breakup list.
-          </div>
-        )}
         <DynamicTable
           ref={gridRef}
           rowData={rowData}
