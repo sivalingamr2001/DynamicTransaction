@@ -6,8 +6,6 @@ import {
   type RowClickedEvent,
   type CellClickedEvent,
   type SelectionChangedEvent,
-  themeQuartz,
-  themeBalham,
 } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 
@@ -43,12 +41,11 @@ const DynamicTable = forwardRef(
   ) => {
     return (
       <div className="relative h-full w-full min-h-0">
-        <div className="h-full w-full">
+        <div className="ag-theme-quartz h-full w-full">
           <AgGridReact
             ref={ref}
             rowData={rowData}
             columnDefs={columnDefs}
-            theme={themeBalham}
             pagination={false}
             paginationPageSize={paginationPageSize}
             paginationPageSizeSelector={[25, 50, 100, 200, 500]}

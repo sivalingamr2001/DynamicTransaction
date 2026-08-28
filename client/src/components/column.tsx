@@ -57,16 +57,11 @@ export function useColumns() {
                     key={monthOption.value}
                     type="button"
                     onClick={() => {
+                      params.node.setSelected(true)
                       params.node.setDataValue(
                         "TARGET_MON_FINAL",
                         monthOption.value
                       )
-
-                      const target = String(monthOption.value)
-                      params.api.forEachNode((node: any) => {
-                        const v = String(node.data?.TARGET_MON_FINAL ?? "")
-                        if (v === target) node.setSelected(true)
-                      })
                     }}
                     className={`relative z-10 flex h-5 items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold transition-colors duration-200 ${isActive
                       ? "bg-emerald-600 text-white"
@@ -265,18 +260,11 @@ export function useColumns() {
                     key={monthOption.value}
                     type="button"
                     onClick={() => {
-                      if (!params.node.isSelected()) {
-                        params.node.setSelected(true)
-                      }
+                      params.node.setSelected(true)
                       params.node.setDataValue(
                         "TARGET_MON_FINAL",
                         monthOption.value
                       )
-                      const target = String(monthOption.value)
-                      params.api.forEachNode((node: any) => {
-                        const v = String(node.data?.TARGET_MON_FINAL ?? "")
-                        if (v === target) node.setSelected(true)
-                      })
                     }}
                     className={`relative z-10 flex h-5 items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold transition-colors duration-200 ${isActive
                       ? "bg-emerald-600 text-white"
