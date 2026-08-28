@@ -859,6 +859,18 @@ WHERE
 ORDER BY customer_name ASC~';
     INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (30, 'Get Customer Name By Region And Search', l_query_text);
 
+    l_query_text := q'~SELECT 
+                TO_CHAR(TRX_DATE, 'YYYYMM') AS MONTH,
+                SUM(QUANTITY_INVOICED) AS SALES
+            FROM JAN_ALL_OU_SALES_T2
+            WHERE BILL_TO_CUSTOMER_ID = :CustomerId
+              AND ORGANIZATION_ID = :OrgId
+              AND INVENTORY_ITEM_ID = :InventoryId
+              AND TRX_DATE >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -12)
+            GROUP BY TO_CHAR(TRX_DATE, 'YYYYMM')
+            ORDER BY MONTH ASC~';
+    INSERT INTO JAN_QUERY_DEFINITION_DEV (QUERY_NUMBER, DESCRIPTION, QUERY_TEXT) VALUES (31, 'Get Monthly Quantity Trend', l_query_text);
+
     COMMIT;
 END;
 /

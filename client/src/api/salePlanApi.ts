@@ -208,7 +208,7 @@ export const salesPlanApi = {
   ) =>
     apiClient
       .post<any>("/query/execute", {
-        QueryNumber: 28,
+        QueryNumber: 31,
         InputParameters: {
           CustomerId: customerId,
           OrgId: orgId,

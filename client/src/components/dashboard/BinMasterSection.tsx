@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { salesPlanApi } from "@/api/salePlanApi"
-import { getCustomerNameByRegion, type RegionCustomer } from "@/api/authApi"
-import type { InventoryItemDto } from "@/api/types"
 import { useColumns } from "@/components/column"
 import { useAuth } from "@/context/AuthContext"
 import DynamicTable from "@/components/DynamicTable"
@@ -36,18 +34,6 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
 
   // Create bin modal states
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [regionCustomers, setRegionCustomers] = useState<RegionCustomer[]>([])
-  const [inventoryItems, setInventoryItems] = useState<InventoryItemDto[]>([])
-  
-  // Create bin form fields
-  const [newBinCustomer, setNewBinCustomer] = useState<RegionCustomer | null>(null)
-  const [newBinItem, setNewBinItem] = useState<InventoryItemDto | null>(null)
-  const [newBinTbrQty, setNewBinTbrQty] = useState(0)
-  const [newBinCat, setNewBinCat] = useState("NORMAL")
-  const [newBinStockType, setNewBinStockType] = useState("FG")
-  const [newBinLocation, setNewBinLocation] = useState("")
-  const [customerSearchTerm, setCustomerSearchTerm] = useState("")
-  const [itemSearchTerm, setItemSearchTerm] = useState("")
 
   // Delete bin master confirmation states
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -70,38 +56,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
     fetchRegions()
   }, [currentRegion])
 
-  // Fetch regional customer lookup
-  const loadCustomers = async (reg: string, search = "") => {
-    try {
-      const list = await getCustomerNameByRegion(reg, search)
-      setRegionCustomers(list)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  // Fetch inventory master items lookup
-  const loadItems = async (search = "") => {
-    try {
-      const res = await salesPlanApi.getInventoryItemDetails(search)
-      setInventoryItems(res.data || [])
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  // Reload lists when modal opens
-  useEffect(() => {
-    if (isCreateOpen) {
-      loadCustomers(regionFilter, customerSearchTerm)
-    }
-  }, [isCreateOpen, regionFilter, customerSearchTerm])
-
-  useEffect(() => {
-    if (isCreateOpen) {
-      loadItems(itemSearchTerm)
-    }
-  }, [isCreateOpen, itemSearchTerm])
+  // Data loading handler
 
   // Load data based on subView selection
   const loadData = useCallback(async () => {
@@ -124,46 +79,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
     loadData()
   }, [subView, regionFilter, loadData])
 
-  // Create Bin Master Submission (Query 21)
-  const handleCreateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newBinItem) {
-      toast.error("Please select a master item.")
-      return
-    }
-
-    const payload = {
-      customerId: newBinCustomer?.CUSTOMER_ID ?? null,
-      custName: newBinCustomer?.CUSTOMER_NAME ?? null,
-      inventoryItemId: newBinItem.INVENTORY_ITEM_ID,
-      itemNo: newBinItem.ITEM_NO,
-      description: newBinItem.DESCRIPTION,
-      organizationId: 204, // Default org code
-      org: "JHP",
-      region: regionFilter,
-      tbrQty: newBinTbrQty,
-      binCat: newBinCat,
-      stockType: newBinStockType,
-      binLocation: newBinLocation,
-      createdBy: currentUser?.username || "admin",
-      lastUpdateBy: currentUser?.username || "admin",
-    }
-
-    try {
-      await withLoader(() => salesPlanApi.createBinRecord(payload))
-      toast.success("Bin master record created successfully.")
-      setIsCreateOpen(false)
-      // Reset form fields
-      setNewBinCustomer(null)
-      setNewBinItem(null)
-      setNewBinTbrQty(0)
-      setNewBinLocation("")
-      loadData()
-    } catch (err: any) {
-      console.error(err)
-      toast.error(err?.message || "Failed to create bin master record.")
-    }
-  }
+  // Trigger Delete Modal
 
   // Trigger Delete Modal
   const handleDeleteClick = () => {
@@ -339,30 +255,12 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
         />
       </div>
 
-      {/* Create Bin modal popup dialog */}
       <CreateBin
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreateSubmit}
-        regionFilter={regionFilter}
-        customerSearchTerm={customerSearchTerm}
-        setCustomerSearchTerm={setCustomerSearchTerm}
-        regionCustomers={regionCustomers}
-        newBinCustomer={newBinCustomer}
-        setNewBinCustomer={setNewBinCustomer}
-        itemSearchTerm={itemSearchTerm}
-        setItemSearchTerm={setItemSearchTerm}
-        inventoryItems={inventoryItems}
-        newBinItem={newBinItem}
-        setNewBinItem={setNewBinItem}
-        newBinTbrQty={newBinTbrQty}
-        setNewBinTbrQty={setNewBinTbrQty}
-        newBinStockType={newBinStockType}
-        setNewBinStockType={setNewBinStockType}
-        newBinCat={newBinCat}
-        setNewBinCat={setNewBinCat}
-        newBinLocation={newBinLocation}
-        setNewBinLocation={setNewBinLocation}
+        onSuccess={loadData}
+        mode="create"
+        selectedRow={null}
       />
 
       {/* Delete Confirmation modal dialog */}
