@@ -179,7 +179,7 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
         const res = await withLoader(() => salesPlanApi.getSalesPlans("", "", currentRegion?.region || ""))
         existingData = res.data || []
       } else {
-        const res = await withLoader(() => salesPlanApi.getAllBins(currentRegion?.region || ""))
+        const res = await withLoader(() => salesPlanApi.getCustomerReplenishmentBins(currentRegion?.region || ""))
         existingData = res.data || []
       }
 

@@ -18,7 +18,7 @@ export interface RegionCustomer {
   CUSTOMER_CLASS_CODE: string | null
 }
 
-export const loginApi = async (
+export const loginApi = async ( //Query numer 28
   username: string,
   password?: string
 ): Promise<RegionDetailsDto> => {
@@ -33,7 +33,7 @@ export const loginApi = async (
  * GET /api/Allocation/regions
  * Get all regions and sub-regions
  */
-export const getRegions = async (): Promise<Region[]> => {
+export const getRegions = async (): Promise<Region[]> => { //Query numer 29
   const { data } = await apiClient.get<Region[]>("/regions")
   return data
 }
@@ -42,7 +42,7 @@ export const getRegions = async (): Promise<Region[]> => {
  * POST /api/Auth/get-customer-name-by-region
  * Get customer names by specified region primitive string payload
  */
-export const getCustomerNameByRegion = async (
+export const getCustomerNameByRegion = async ( //Query numer 30
   region: string,
   searchTerm = ""
 ): Promise<RegionCustomer[]> => {
