@@ -24,6 +24,7 @@ interface DynamicTableProps {
   onCellClicked?: (event: CellClickedEvent) => void
   onSelectionChanged?: (event: SelectionChangedEvent) => void
   onGridReady?: (event: GridReadyEvent) => void
+  context?: any
 }
 
 const DynamicTable = forwardRef(
@@ -37,16 +38,18 @@ const DynamicTable = forwardRef(
       onCellClicked,
       onSelectionChanged,
       onGridReady,
+      context,
     }: DynamicTableProps,
     ref: ForwardedRef<AgGridReact>
   ) => {
     return (
       <div className="relative h-full w-full min-h-0">
-        <div className="h-full w-full">
+        <div className="ag-theme-quartz h-full w-full">
           <AgGridReact
             ref={ref}
             rowData={rowData}
             columnDefs={columnDefs}
+            context={context}
             pagination={false}
             paginationPageSize={paginationPageSize}
             paginationPageSizeSelector={[25, 50, 100, 200, 500]}

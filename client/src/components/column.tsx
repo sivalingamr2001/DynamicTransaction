@@ -817,6 +817,48 @@ export function useColumns() {
         type: "numericColumn",
       },
       { field: "CUSTOMER_CATEGORY", headerName: "Cust Category", width: 130 },
+      {
+        headerName: "Actions",
+        width: 160,
+        pinned: "right",
+        filter: false,
+        sortable: false,
+        resizable: false,
+        cellRenderer: (params: any) => {
+          const handleApprove = (e: any) => {
+            e.stopPropagation()
+            if (params.context?.onApproveRow) {
+              params.context.onApproveRow(params.data)
+            }
+          }
+
+          const handleDelete = (e: any) => {
+            e.stopPropagation()
+            if (params.context?.onDeleteRow) {
+              params.context.onDeleteRow(params.data)
+            }
+          }
+
+          return (
+            <div className="flex items-center gap-1.5 h-full py-1">
+              <button
+                type="button"
+                onClick={handleApprove}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded shadow-sm cursor-pointer transition-colors"
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded shadow-sm cursor-pointer transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          )
+        },
+      },
     ],
     []
   )

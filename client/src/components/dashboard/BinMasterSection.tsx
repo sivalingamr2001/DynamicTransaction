@@ -6,9 +6,8 @@ import { useColumns } from "@/components/column"
 import { useAuth } from "@/context/AuthContext"
 import DynamicTable from "@/components/DynamicTable"
 import { Button } from "@/components/ui/button"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { toast } from "sonner"
-import { RefreshCw, FileSpreadsheet, CheckCircle2, Plus, Trash2 } from "lucide-react"
+import { RefreshCw, FileSpreadsheet, Plus, Trash2 } from "lucide-react"
 import type { AgGridReact } from "ag-grid-react"
 import type { ColDef } from "ag-grid-community"
 import { CreateBin } from "./CreateBin"
@@ -29,7 +28,6 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
 
   // Data state
   const [rowData, setRowData] = useState<any[]>([])
-  const [regions, setRegions] = useState<string[]>([])
   
   // Selected region filter for All Bins
   const [regionFilter, setRegionFilter] = useState("HO")
@@ -62,7 +60,6 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
       try {
         const res = await salesPlanApi.getAllRegionDetails()
         const unique = Array.from(new Set(res.data.map((r) => r.region).filter(Boolean))) as string[]
-        setRegions(unique)
         if (unique.length > 0) {
           setRegionFilter(currentRegion?.region || unique[0])
         }
@@ -206,32 +203,34 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
     }
   }
 
-  // Approve selected pending replenishment bins
-  const handleApproveSelected = async () => {
-    const selectedNodes = gridRef.current?.api?.getSelectedNodes() || []
-    if (selectedNodes.length === 0) {
-      toast.warning("Please select pending replenishment rows to approve.")
-      return
-    }
-
+  // Row-level approval handler
+  const handleApproveRow = async (rowDataItem: any) => {
+    const repId = Number(rowDataItem.REP_ID || rowDataItem.rep_id)
+    if (!repId) return
     try {
-      await withLoader(async () => {
-        for (const node of selectedNodes) {
-          const repId = Number(node.data.REP_ID || node.data.rep_id)
-          if (repId) {
-            await salesPlanApi.approveBinRecord({
-              repId,
-              approvedBy: currentUser?.username || "admin",
-            })
-          }
-        }
-      })
-      toast.success("Selected replenishment bins approved successfully.")
+      await withLoader(() =>
+        salesPlanApi.approveBinRecord({
+          repId,
+          approvedBy: currentUser?.username || "admin",
+        })
+      )
+      toast.success("Replenishment bin approved successfully.")
       loadData()
     } catch (err: any) {
       console.error(err)
-      toast.error(err?.message || "Failed to approve replenishment bins.")
+      toast.error(err?.message || "Failed to approve replenishment bin.")
     }
+  }
+
+  // Row-level delete click handler
+  const handleDeleteRowClick = (rowDataItem: any) => {
+    const repId = Number(rowDataItem.REP_ID || rowDataItem.rep_id)
+    const itemNo = String(rowDataItem.ITEM_NO || rowDataItem.item_no || "")
+    if (!repId) return
+
+    setSelectedRepId(repId)
+    setSelectedItemNo(itemNo)
+    setIsDeleteOpen(true)
   }
 
   const handleExportCsv = () => {
@@ -303,16 +302,7 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
             </>
           )}
 
-          {subView === "pending_bins" && (
-            <Button
-              onClick={handleApproveSelected}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-              size="sm"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-              Approve Selected
-            </Button>
-          )}
+          {/* Actions are inline inside the table row Action Column */}
 
           <Button
             variant="outline"
@@ -342,6 +332,10 @@ export const BinMasterSection = ({ withLoader }: BinMasterSectionProps) => {
           ref={gridRef}
           rowData={rowData}
           columnDefs={getActiveColumns()}
+          context={{
+            onApproveRow: handleApproveRow,
+            onDeleteRow: handleDeleteRowClick
+          }}
         />
       </div>
 
