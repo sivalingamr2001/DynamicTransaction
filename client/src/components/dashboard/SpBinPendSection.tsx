@@ -90,7 +90,7 @@ export const SpBinPendSection = ({ withLoader }: SpBinPendSectionProps) => {
             className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             size="sm"
           >
-            Save Target Month
+            Submit
           </Button>
 
           <Button

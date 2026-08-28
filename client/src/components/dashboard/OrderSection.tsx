@@ -180,100 +180,136 @@ export const OrderSection = ({ withLoader }: OrderSectionProps) => {
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-slate-50">
-      {/* Top action header for Order section */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
-        <div className="flex items-center gap-3">
-          {isHod && hodView !== "consolidated" && (
+      {/* Top action header for HOD users only */}
+      {isHod && (
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+          <div className="flex items-center gap-3">
+            {hodView !== "consolidated" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setHodView("consolidated")}
+                className="h-7 border-slate-300 text-slate-600"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 mr-1" />
+                Back
+              </Button>
+            )}
+            <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
+              {getHeaderTitle()}
+            </h2>
+          </div>
+
+          {/* Action Controls for HOD */}
+          <div className="flex items-center gap-2">
+            {/* Target Month update provision for Breakups */}
+            {hodView !== "consolidated" && (
+              <Button
+                onClick={handleSaveTargetMonths}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                size="sm"
+              >
+                Submit
+              </Button>
+            )}
+
+            {/* Full Breakup button for HO Consolidated */}
+            {hodView === "consolidated" && (
+              <Button
+                onClick={() => setHodView("full_breakup")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                size="sm"
+              >
+                Full Breakup View
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setHodView("consolidated")}
-              className="h-7 border-slate-300 text-slate-600"
+              onClick={loadData}
+              className="border-slate-300 text-slate-600"
             >
-              <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-              Back
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              Refresh
             </Button>
-          )}
-          <h2 className="text-xs font-black tracking-tight text-slate-800 uppercase">
-            {getHeaderTitle()}
-          </h2>
-        </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
-          {/* Target Month update provision for Breakups */}
-          {isHod && hodView !== "consolidated" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCsv}
+              className="border-slate-300 text-slate-600"
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5 mr-1" />
+              Export CSV
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Branch search filter & actions panel in a single line (no title header) */}
+      {!isHod && (
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-2">
+          {/* Filters and Query button */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-slate-500">Customer:</span>
+              <Input
+                placeholder="Search customer..."
+                value={custNameInput}
+                onChange={(e) => setCustNameInput(e.target.value)}
+                className="w-44 border-slate-300 bg-white"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-slate-500">Order/Item No:</span>
+              <Input
+                placeholder="Search item or order id..."
+                value={ordItemInput}
+                onChange={(e) => setOrdItemInput(e.target.value)}
+                className="w-44 border-slate-300 bg-white"
+              />
+            </div>
+            <Button
+              onClick={loadData}
+              size="sm"
+              className="bg-blue-600 text-white font-semibold"
+            >
+              <Search className="h-3.5 w-3.5 mr-1" />
+              Query
+            </Button>
+          </div>
+
+          {/* Action buttons (Refresh, CSV, Submit) */}
+          <div className="flex items-center gap-2">
             <Button
               onClick={handleSaveTargetMonths}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
               size="sm"
             >
-              Save Target Month
+              Submit
             </Button>
-          )}
 
-          {/* Full Breakup button for HO Consolidated */}
-          {isHod && hodView === "consolidated" && (
             <Button
-              onClick={() => setHodView("full_breakup")}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              variant="outline"
               size="sm"
+              onClick={loadData}
+              className="border-slate-300 text-slate-600"
             >
-              Full Breakup View
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              Refresh
             </Button>
-          )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadData}
-            className="border-slate-300 text-slate-600"
-          >
-            <RefreshCw className="h-3.5 w-3.5 mr-1" />
-            Refresh
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportCsv}
-            className="border-slate-300 text-slate-600"
-          >
-            <FileSpreadsheet className="h-3.5 w-3.5 mr-1" />
-            Export CSV
-          </Button>
-        </div>
-      </div>
-
-      {/* Branch search filter panel */}
-      {!isHod && (
-        <div className="flex shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6 py-2">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-slate-500">Customer:</span>
-            <Input
-              placeholder="Search customer..."
-              value={custNameInput}
-              onChange={(e) => setCustNameInput(e.target.value)}
-              className="w-48 border-slate-300 bg-white"
-            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportCsv}
+              className="border-slate-300 text-slate-600"
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5 mr-1" />
+              Export CSV
+            </Button>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-slate-500">Order/Item No:</span>
-            <Input
-              placeholder="Search item or order id..."
-              value={ordItemInput}
-              onChange={(e) => setOrdItemInput(e.target.value)}
-              className="w-48 border-slate-300 bg-white"
-            />
-          </div>
-          <Button
-            onClick={loadData}
-            size="sm"
-            className="bg-blue-600 text-white font-semibold"
-          >
-            <Search className="h-3.5 w-3.5 mr-1" />
-            Query
-          </Button>
         </div>
       )}
 
